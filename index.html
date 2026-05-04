@@ -1,0 +1,2215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NETSCOUT – Guardians of the Connected World®</title>
+
+  <!-- Amplitude Browser SDK + Session Replay Plugin -->
+  <script src="https://cdn.amplitude.com/libs/analytics-browser-2.11.12-min.js.gz"></script>
+  <script src="https://cdn.amplitude.com/libs/plugin-session-replay-browser-1.13.10-min.js.gz"></script>
+
+  <style>
+    /* ============================================================
+       TOKENS — matched to real NETSCOUT site
+       Nav: white, Logo: dark charcoal, Accent: teal-green #00A3AD
+       Body: white, Sections: light gray #F5F6F7
+       Headings: dark charcoal #1C1C1E, Text: #4A4A5A
+       CTA button: teal-green, no orange
+    ============================================================ */
+    :root {
+      --navy:      #1C1C1E;
+      --navy-dark: #0F0F10;
+      --teal:      #00A3AD;
+      --teal-dark: #007A82;
+      --green:     #3EBA8F;
+      --orange:    #00A3AD;   /* repointed to teal — orange removed from brand */
+      --white:     #FFFFFF;
+      --gray-50:   #F5F6F7;
+      --gray-100:  #EAEBEC;
+      --gray-300:  #C2C4C8;
+      --gray-600:  #5A5A6E;
+      --gray-900:  #1C1C1E;
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --radius: 6px;
+      --shadow: 0 1px 6px rgba(0,0,0,.08);
+      --shadow-lg: 0 8px 32px rgba(0,0,0,.12);
+    }
+
+    /* ============================================================
+       RESET + BASE
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font); color: var(--gray-900); background: var(--white); }
+    a { color: inherit; text-decoration: none; }
+    button { cursor: pointer; border: none; background: none; font-family: inherit; }
+    img { display: block; max-width: 100%; }
+
+    /* ============================================================
+       NAVIGATION
+    ============================================================ */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--white); color: var(--navy);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 48px; height: 68px;
+      border-bottom: 1px solid var(--gray-100);
+      box-shadow: 0 1px 4px rgba(0,0,0,.06);
+    }
+    .nav-logo {
+      font-size: 21px; font-weight: 900; letter-spacing: -.5px; color: var(--navy);
+      display: flex; align-items: center; gap: 10px; cursor: pointer;
+    }
+    .nav-logo span { color: var(--teal); }
+    .nav-links { display: flex; gap: 32px; font-size: 14px; font-weight: 500; }
+    .nav-links a { color: var(--gray-600); transition: color .2s; cursor: pointer; }
+    .nav-links a:hover { color: var(--navy); }
+    .nav-cta {
+      background: var(--teal); color: var(--white);
+      padding: 9px 22px; border-radius: var(--radius); font-size: 14px; font-weight: 700;
+      transition: background .2s;
+    }
+    .nav-cta:hover { background: var(--teal-dark); }
+
+    /* ============================================================
+       PAGE ROUTING — only active page visible
+    ============================================================ */
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* ============================================================
+       SHARED COMPONENTS
+    ============================================================ */
+    .section { padding: 80px 48px; }
+    .section-sm { padding: 48px 48px; }
+    .container { max-width: 1200px; margin: 0 auto; }
+    .tag {
+      display: inline-block; background: rgba(0,163,173,.10); color: var(--teal);
+      font-size: 11px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase;
+      padding: 4px 12px; border-radius: 4px; margin-bottom: 16px;
+    }
+    h1 { font-size: 52px; line-height: 1.1; font-weight: 800; color: #1C1C1E; }
+    h2 { font-size: 36px; line-height: 1.2; font-weight: 700; color: #1C1C1E; }
+    h3 { font-size: 20px; font-weight: 700; color: #1C1C1E; }
+    h4 { font-size: 15px; font-weight: 700; color: #1C1C1E; }
+    p { line-height: 1.7; color: var(--gray-600); }
+    .lead { font-size: 17px; line-height: 1.65; color: var(--gray-600); max-width: 640px; }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--teal); color: var(--white);
+      padding: 14px 28px; border-radius: var(--radius);
+      font-size: 15px; font-weight: 700; transition: background .2s, transform .1s;
+    }
+    .btn-primary:hover { background: var(--teal-dark); transform: translateY(-1px); }
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: transparent; color: var(--navy);
+      border: 1.5px solid var(--gray-300); padding: 12px 24px; border-radius: var(--radius);
+      font-size: 15px; font-weight: 600; transition: all .2s;
+    }
+    .btn-secondary:hover { border-color: var(--teal); color: var(--teal); }
+    .btn-white {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,.12); color: var(--white);
+      border: 1px solid rgba(255,255,255,.25);
+      padding: 14px 28px; border-radius: var(--radius);
+      font-size: 15px; font-weight: 600; transition: all .2s;
+    }
+    .btn-white:hover { background: rgba(255,255,255,.20); }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+    .card {
+      background: var(--white); border-radius: 12px;
+      border: 1px solid var(--gray-100); padding: 32px;
+      box-shadow: var(--shadow); transition: box-shadow .2s, transform .2s;
+    }
+    .card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+    .hero-bg { background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy) 100%); color: var(--white); }
+    .hero-bg h1, .hero-bg h2 { color: var(--white); }
+    .hero-bg .lead { color: rgba(255,255,255,.80); }
+
+    /* ============================================================
+       BREADCRUMB
+    ============================================================ */
+    .breadcrumb {
+      padding: 12px 48px; background: var(--gray-50); border-bottom: 1px solid var(--gray-100);
+      font-size: 13px; color: var(--gray-600); display: flex; gap: 8px; align-items: center;
+    }
+    .breadcrumb a { color: var(--teal); cursor: pointer; }
+    .breadcrumb a:hover { text-decoration: underline; }
+
+    /* ============================================================
+       PAGE 1: HOME (HEATMAPS PAGE)
+    ============================================================ */
+    .home-hero {
+      background: #0D1117;
+      background-image:
+        radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0,163,173,.22) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 40% at 80% 80%, rgba(62,186,143,.10) 0%, transparent 60%);
+      padding: 100px 48px 88px;
+      position: relative; overflow: hidden;
+    }
+    .home-hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(255,255,255,.02) 40px),
+        repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(255,255,255,.02) 40px);
+      pointer-events: none;
+    }
+    .home-hero .container { position: relative; z-index: 1; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(0,163,173,.15); border: 1px solid rgba(0,163,173,.35);
+      color: #5FD8DF; font-size: 13px; font-weight: 600;
+      padding: 6px 14px; border-radius: 99px; margin-bottom: 24px;
+    }
+    .hero-badge .dot { width: 7px; height: 7px; background: var(--teal); border-radius: 50%; }
+    .home-hero h1 { color: var(--white); font-size: 56px; margin-bottom: 20px; max-width: 760px; line-height: 1.08; font-weight: 800; }
+    .home-hero h1 span { color: #5FD8DF; }
+    .home-hero .lead { color: rgba(255,255,255,.72); margin-bottom: 36px; font-size: 18px; max-width: 580px; }
+    .hero-ctas { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 56px; }
+    .hero-stats {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;
+      background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08);
+      border-radius: 10px; padding: 28px 32px; margin-top: 48px;
+    }
+    .stat-item { text-align: center; }
+    .stat-num { font-size: 34px; font-weight: 800; color: var(--white); }
+    .stat-num span { color: #5FD8DF; }
+    .stat-label { font-size: 13px; color: rgba(255,255,255,.55); margin-top: 4px; }
+
+    /* Report Banner */
+    .problem-banner {
+      background: rgba(0,163,173,.06); border: 1px solid rgba(0,163,173,.2); border-radius: 10px;
+      padding: 20px 28px; display: flex; align-items: center; gap: 16px;
+      margin-bottom: 24px;
+    }
+    .problem-banner .icon { font-size: 28px; }
+    .problem-banner p { color: var(--gray-900); font-weight: 500; margin: 0; }
+    .problem-banner strong { color: var(--navy); }
+
+    /* Products Section */
+    .product-card { padding: 28px; cursor: pointer; }
+    .product-card .icon-box {
+      width: 52px; height: 52px; border-radius: 10px; margin-bottom: 16px;
+      display: flex; align-items: center; justify-content: center; font-size: 24px;
+    }
+    .product-card.ngenius .icon-box { background: rgba(0,168,204,.12); }
+    .product-card.arbor .icon-box { background: rgba(245,130,30,.12); }
+    .product-card.omnis .icon-box { background: rgba(0,31,91,.08); }
+    .product-card h3 { margin-bottom: 8px; }
+    .product-card p { font-size: 14px; margin-bottom: 16px; }
+    .product-link { color: var(--teal); font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 4px; }
+
+    /* Content Engagement Section */
+    .resource-card { cursor: pointer; overflow: hidden; }
+    .resource-thumb {
+      height: 180px; border-radius: 8px; margin-bottom: 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 48px; font-weight: 800;
+    }
+    .resource-card .tag { margin-bottom: 10px; }
+    .resource-card h4 { margin-bottom: 8px; }
+    .resource-card p { font-size: 13px; margin-bottom: 14px; }
+
+    /* Proof Bar */
+    .proof-bar { background: var(--gray-50); border-top: 1px solid var(--gray-100); border-bottom: 1px solid var(--gray-100); }
+    .proof-logos { display: flex; align-items: center; justify-content: space-around; flex-wrap: wrap; gap: 32px; }
+    .proof-logo { font-size: 18px; font-weight: 800; color: var(--gray-300); letter-spacing: -0.5px; }
+
+    /* Case Study */
+    .case-study {
+      background: linear-gradient(135deg, #0D1117 0%, #1a2535 100%);
+      border-radius: 16px; padding: 48px; color: var(--white);
+      display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center;
+    }
+    .case-study h2 { color: var(--white); font-size: 32px; margin-bottom: 16px; }
+    .cs-stat { text-align: center; }
+    .cs-stat .num { font-size: 44px; font-weight: 800; color: var(--teal); }
+    .cs-stat .label { font-size: 13px; color: rgba(255,255,255,.65); }
+
+    /* CTA Section */
+    .cta-section {
+      background: #0D1117;
+      background-image: radial-gradient(ellipse 70% 80% at 50% 50%, rgba(0,163,173,.18) 0%, transparent 70%);
+      padding: 80px 48px; text-align: center; color: var(--white);
+    }
+    .cta-section h2 { color: var(--white); margin-bottom: 12px; }
+    .cta-section p { color: rgba(255,255,255,.70); margin-bottom: 28px; font-size: 17px; }
+    .cta-group { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+    /* Footer */
+    footer { background: #0D1117; color: rgba(255,255,255,.55); padding: 48px; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 40px; }
+    .footer-col h4 { color: var(--white); margin-bottom: 16px; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .footer-col li { font-size: 13px; cursor: pointer; transition: color .2s; }
+    .footer-col li:hover { color: var(--white); }
+    .footer-bottom { border-top: 1px solid rgba(255,255,255,.08); padding-top: 20px; font-size: 12px; display: flex; justify-content: space-between; }
+
+    /* ============================================================
+       PAGE 2: nGENIUS SOLUTION PAGE
+    ============================================================ */
+    .solution-hero { padding: 72px 48px; background: var(--gray-50); }
+    .feature-tabs { display: flex; gap: 4px; background: var(--gray-100); border-radius: 10px; padding: 4px; margin-bottom: 40px; }
+    .tab-btn {
+      flex: 1; padding: 10px 16px; border-radius: 8px; font-size: 14px; font-weight: 600;
+      color: var(--gray-600); transition: all .2s; text-align: center;
+    }
+    .tab-btn.active { background: var(--white); color: var(--navy); box-shadow: var(--shadow); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+    .feature-visual {
+      background: linear-gradient(135deg, #0D1117 0%, #1a2535 100%);
+      border-radius: 16px; padding: 40px; min-height: 320px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .mini-chart { width: 100%; }
+    .chart-bars { display: flex; gap: 8px; align-items: flex-end; height: 120px; }
+    .bar { flex: 1; border-radius: 4px 4px 0 0; opacity: .85; }
+    .spec-list { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+    .spec-list li { display: flex; gap: 12px; font-size: 15px; color: var(--gray-600); }
+    .spec-list li::before { content: '✓'; color: var(--teal); font-weight: 700; flex-shrink: 0; margin-top: 2px; }
+
+    /* ============================================================
+       PAGE 3: PRODUCT BRIEF
+    ============================================================ */
+    .brief-layout { display: grid; grid-template-columns: 1fr 420px; gap: 48px; align-items: start; }
+    .brief-preview {
+      background: var(--navy); border-radius: 16px; padding: 40px;
+      color: var(--white); min-height: 400px;
+    }
+    .form-card { background: var(--white); border-radius: 16px; border: 1px solid var(--gray-100); padding: 36px; box-shadow: var(--shadow-lg); }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--gray-900); margin-bottom: 6px; }
+    .form-group input, .form-group select {
+      width: 100%; padding: 11px 14px; border: 1.5px solid var(--gray-300);
+      border-radius: var(--radius); font-size: 14px; font-family: inherit;
+      transition: border-color .2s; outline: none;
+    }
+    .form-group input:focus, .form-group select:focus { border-color: var(--teal); }
+    .form-submit { width: 100%; }
+    .success-state { display: none; text-align: center; padding: 40px 20px; }
+    .success-icon { font-size: 56px; margin-bottom: 16px; }
+
+    /* ============================================================
+       PAGE 4: VIDEO
+    ============================================================ */
+    .video-player {
+      background: #000; border-radius: 16px; overflow: hidden;
+      aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; position: relative; margin-bottom: 24px;
+    }
+    .video-player .play-btn {
+      width: 80px; height: 80px; background: rgba(255,255,255,.92);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 30px; color: var(--navy); transition: transform .2s;
+    }
+    .video-player:hover .play-btn { transform: scale(1.1); }
+    .video-overlay {
+      position: absolute; inset: 0; background: linear-gradient(135deg, #0D1117 0%, #1a2535 80%);
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px;
+    }
+    .video-overlay.playing { display: none; }
+    .video-progress { height: 4px; background: var(--gray-100); border-radius: 99px; overflow: hidden; margin-bottom: 8px; }
+    .video-progress-bar { height: 100%; width: 0%; background: var(--teal); border-radius: 99px; transition: width .5s; }
+    .chapter-list { display: flex; flex-direction: column; gap: 8px; }
+    .chapter-item {
+      display: flex; gap: 14px; align-items: center; padding: 12px 16px;
+      border-radius: var(--radius); border: 1px solid var(--gray-100); cursor: pointer; transition: all .2s;
+    }
+    .chapter-item:hover { background: var(--gray-50); border-color: var(--teal); }
+    .chapter-item.active { background: rgba(0,168,204,.08); border-color: var(--teal); }
+    .chapter-time { font-size: 12px; font-weight: 700; color: var(--teal); min-width: 44px; }
+
+    /* ============================================================
+       PAGE 5: WEBINAR
+    ============================================================ */
+    .webinar-card {
+      background: linear-gradient(135deg, #0D1117 0%, #1a2535 100%);
+      border-radius: 16px; padding: 40px; color: var(--white); margin-bottom: 32px;
+    }
+    .webinar-card h2 { color: var(--white); margin-bottom: 8px; }
+    .webinar-meta { display: flex; gap: 24px; margin: 20px 0; flex-wrap: wrap; }
+    .webinar-meta-item { display: flex; gap: 8px; align-items: center; font-size: 14px; color: rgba(255,255,255,.75); }
+    .webinar-agenda { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+    .webinar-agenda li { display: flex; gap: 12px; align-items: center; font-size: 14px; color: rgba(255,255,255,.80); }
+    .webinar-agenda li span { width: 6px; height: 6px; background: var(--teal); border-radius: 50%; flex-shrink: 0; }
+    #join-section { display: none; }
+
+    /* ============================================================
+       PAGE 6: REQUEST DEMO
+    ============================================================ */
+    .demo-hero { background: var(--gray-50); padding: 64px 48px; }
+    .demo-layout { display: grid; grid-template-columns: 1fr 480px; gap: 64px; align-items: start; }
+    .demo-benefits { list-style: none; display: flex; flex-direction: column; gap: 16px; margin-top: 24px; }
+    .demo-benefits li { display: flex; gap: 14px; align-items: flex-start; font-size: 15px; }
+    .demo-benefits li .check { width: 24px; height: 24px; background: rgba(0,168,204,.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 13px; color: var(--teal); margin-top: 1px; }
+    .interest-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+    .interest-btn {
+      padding: 10px; border: 1.5px solid var(--gray-300); border-radius: var(--radius);
+      font-size: 13px; font-weight: 500; color: var(--gray-600); text-align: left; transition: all .2s;
+    }
+    .interest-btn.selected { border-color: var(--teal); background: rgba(0,168,204,.06); color: var(--navy); }
+
+    /* ============================================================
+       PAGE 7: BOOK CALL
+    ============================================================ */
+    .calendar-widget {
+      background: var(--white); border: 1px solid var(--gray-100); border-radius: 16px;
+      overflow: hidden; box-shadow: var(--shadow-lg);
+    }
+    .cal-header {
+      background: #0D1117; color: var(--white);
+      padding: 20px 24px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .cal-nav { background: rgba(255,255,255,.15); border: none; color: white; width: 32px; height: 32px; border-radius: 50%; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .cal-grid { padding: 20px; }
+    .cal-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 8px; }
+    .cal-day-label { text-align: center; font-size: 11px; font-weight: 700; color: var(--gray-600); text-transform: uppercase; padding: 4px; }
+    .cal-date {
+      text-align: center; padding: 8px; border-radius: 6px; font-size: 14px;
+      cursor: pointer; transition: all .2s; position: relative;
+    }
+    .cal-date:hover:not(.empty):not(.past) { background: var(--gray-100); }
+    .cal-date.available { color: var(--navy); font-weight: 600; }
+    .cal-date.selected { background: var(--navy); color: var(--white); font-weight: 700; }
+    .cal-date.past { color: var(--gray-300); cursor: default; }
+    .cal-date.empty { cursor: default; }
+    .cal-date.today { border: 2px solid var(--teal); }
+    .time-slots { padding: 0 20px 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .time-slot {
+      padding: 10px; border: 1.5px solid var(--gray-300); border-radius: var(--radius);
+      font-size: 13px; font-weight: 600; color: var(--navy); text-align: center;
+      cursor: pointer; transition: all .2s;
+    }
+    .time-slot:hover { border-color: var(--teal); background: rgba(0,168,204,.05); }
+    .time-slot.selected { background: var(--navy); color: var(--white); border-color: var(--navy); }
+    .confirmation-card { display: none; background: var(--gray-50); border: 1px solid var(--gray-100); border-radius: 12px; padding: 32px; text-align: center; }
+
+    /* ============================================================
+       PAGE: NETWORK OBSERVABILITY LANDING PAGE
+    ============================================================ */
+    .obs-hero {
+      background: #0A0F1A;
+      background-image:
+        radial-gradient(ellipse 90% 70% at 60% -10%, rgba(0,163,173,.28) 0%, transparent 55%),
+        radial-gradient(ellipse 50% 50% at 10% 100%, rgba(62,186,143,.10) 0%, transparent 60%);
+      padding: 96px 48px 88px;
+      position: relative; overflow: hidden;
+    }
+    .obs-hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        repeating-linear-gradient(0deg, transparent, transparent 59px, rgba(255,255,255,.018) 60px),
+        repeating-linear-gradient(90deg, transparent, transparent 59px, rgba(255,255,255,.018) 60px);
+      pointer-events: none;
+    }
+    .obs-hero .container { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+    .obs-hero h1 { color: var(--white); font-size: 52px; line-height: 1.06; margin-bottom: 20px; max-width: 600px; font-weight: 800; }
+    .obs-hero h1 em { color: #5FD8DF; font-style: normal; }
+    .obs-hero .lead { color: rgba(255,255,255,.72); margin-bottom: 36px; font-size: 17px; max-width: 520px; }
+    .obs-hero-ctas { display: flex; gap: 14px; flex-wrap: wrap; }
+    .obs-hero-visual {
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 16px; padding: 28px;
+    }
+    .obs-metric-row { display: flex; gap: 12px; margin-bottom: 12px; }
+    .obs-metric {
+      flex: 1; background: rgba(0,163,173,.12); border: 1px solid rgba(0,163,173,.25);
+      border-radius: 10px; padding: 16px; text-align: center;
+    }
+    .obs-metric .num { font-size: 28px; font-weight: 800; color: #5FD8DF; }
+    .obs-metric .lbl { font-size: 11px; color: rgba(255,255,255,.55); margin-top: 2px; }
+    .obs-metric.warn { background: rgba(245,130,30,.10); border-color: rgba(245,130,30,.3); }
+    .obs-metric.warn .num { color: #F5821E; }
+    .obs-metric.ok { background: rgba(62,186,143,.10); border-color: rgba(62,186,143,.25); }
+    .obs-metric.ok .num { color: #3EBA8F; }
+    .obs-flow { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+    .obs-flow-item {
+      display: flex; justify-content: space-between; align-items: center;
+      background: rgba(255,255,255,.06); border-radius: 8px; padding: 10px 14px;
+    }
+    .obs-flow-item .label { font-size: 13px; color: rgba(255,255,255,.75); }
+    .obs-flow-item .bar-wrap { display: flex; gap: 8px; align-items: center; }
+    .obs-bar { height: 6px; background: rgba(255,255,255,.15); border-radius: 3px; overflow: hidden; width: 80px; }
+    .obs-bar-fill { height: 100%; border-radius: 3px; }
+    .obs-bar-fill.teal { background: #5FD8DF; }
+    .obs-bar-fill.orange { background: #F5821E; }
+    .obs-bar-fill.green { background: #3EBA8F; }
+
+    /* Challenge strip */
+    .challenge-strip { background: var(--gray-50); border-top: 1px solid var(--gray-100); border-bottom: 1px solid var(--gray-100); }
+    .challenge-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--gray-100); border-radius: 12px; overflow: hidden; }
+    .challenge-item {
+      background: var(--white); padding: 28px 24px;
+      transition: background .2s;
+    }
+    .challenge-item:hover { background: var(--gray-50); }
+    .challenge-icon { font-size: 28px; margin-bottom: 12px; }
+    .challenge-item h4 { margin-bottom: 8px; font-size: 15px; }
+    .challenge-item p { font-size: 13px; color: var(--gray-600); line-height: 1.6; }
+
+    /* Outcomes */
+    .outcome-card {
+      background: var(--white); border: 1px solid var(--gray-100);
+      border-radius: 14px; padding: 32px;
+      box-shadow: var(--shadow); transition: all .25s;
+      position: relative; overflow: hidden;
+    }
+    .outcome-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0;
+      height: 3px; background: var(--teal);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform .3s;
+    }
+    .outcome-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-3px); }
+    .outcome-card:hover::before { transform: scaleX(1); }
+    .outcome-num { font-size: 40px; font-weight: 800; color: var(--teal); margin-bottom: 4px; line-height: 1; }
+    .outcome-card h3 { font-size: 17px; margin-bottom: 10px; margin-top: 8px; }
+    .outcome-card p { font-size: 14px; color: var(--gray-600); line-height: 1.65; }
+
+    /* Product cards row */
+    .product-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
+    .prod-chip {
+      background: var(--white); border: 1.5px solid var(--gray-100);
+      border-radius: 10px; padding: 20px 16px; text-align: center;
+      cursor: pointer; transition: all .2s;
+    }
+    .prod-chip:hover { border-color: var(--teal); box-shadow: 0 4px 16px rgba(0,163,173,.12); transform: translateY(-2px); }
+    .prod-chip .prod-icon { font-size: 28px; margin-bottom: 10px; }
+    .prod-chip h4 { font-size: 13px; font-weight: 700; color: var(--navy); line-height: 1.3; }
+    .prod-chip p { font-size: 11px; color: var(--gray-600); margin-top: 6px; line-height: 1.4; }
+
+    /* Testimonial */
+    .testimonial-section { background: #0A0F1A; padding: 88px 48px; }
+    .testimonial-section h2 { color: var(--white); text-align: center; margin-bottom: 8px; }
+    .testimonial-section .sub { color: rgba(255,255,255,.55); text-align: center; margin-bottom: 48px; font-size: 15px; }
+    .testimonial-card {
+      background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.10);
+      border-radius: 14px; padding: 32px; position: relative;
+    }
+    .testimonial-card::before { content: '"'; font-size: 72px; color: var(--teal); line-height: 1; position: absolute; top: 12px; left: 20px; opacity: .4; font-family: Georgia, serif; }
+    .testimonial-card blockquote { font-size: 15px; color: rgba(255,255,255,.82); line-height: 1.75; margin-bottom: 20px; padding-top: 24px; }
+    .testimonial-author { display: flex; align-items: center; gap: 14px; }
+    .testimonial-avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--teal); display: flex; align-items: center; justify-content: center; font-weight: 800; color: white; font-size: 16px; flex-shrink: 0; }
+    .testimonial-name { font-size: 14px; font-weight: 700; color: white; }
+    .testimonial-role { font-size: 12px; color: rgba(255,255,255,.5); margin-top: 2px; }
+    .customer-logos { display: flex; align-items: center; justify-content: center; gap: 40px; flex-wrap: wrap; margin-top: 48px; padding-top: 40px; border-top: 1px solid rgba(255,255,255,.08); }
+    .cust-logo { font-size: 16px; font-weight: 800; color: rgba(255,255,255,.30); letter-spacing: -.3px; }
+
+    /* FAQ */
+    .faq-item {
+      border-bottom: 1px solid var(--gray-100);
+      padding: 20px 0;
+      cursor: pointer;
+    }
+    .faq-item:last-child { border-bottom: none; }
+    .faq-q {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 15px; font-weight: 600; color: var(--navy);
+    }
+    .faq-q .chevron { font-size: 18px; color: var(--teal); transition: transform .2s; flex-shrink: 0; }
+    .faq-item.open .chevron { transform: rotate(180deg); }
+    .faq-a {
+      font-size: 14px; color: var(--gray-600); line-height: 1.75;
+      max-height: 0; overflow: hidden; transition: max-height .3s ease, padding .2s;
+    }
+    .faq-item.open .faq-a { max-height: 200px; padding-top: 12px; }
+
+    /* Inline CTA band */
+    .inline-cta {
+      background: linear-gradient(120deg, #00A3AD 0%, #007A82 100%);
+      border-radius: 16px; padding: 48px; display: grid;
+      grid-template-columns: 1fr auto; gap: 40px; align-items: center;
+    }
+    .inline-cta h2 { color: white; margin-bottom: 8px; font-size: 28px; }
+    .inline-cta p { color: rgba(255,255,255,.80); font-size: 15px; }
+    .inline-cta-btns { display: flex; flex-direction: column; gap: 12px; }
+    .btn-solid-white {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      background: white; color: var(--teal-dark);
+      padding: 14px 28px; border-radius: var(--radius);
+      font-size: 15px; font-weight: 700; white-space: nowrap;
+      transition: all .2s;
+    }
+    .btn-solid-white:hover { background: rgba(255,255,255,.9); transform: translateY(-1px); }
+    .btn-ghost-white {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      background: transparent; color: white;
+      border: 1.5px solid rgba(255,255,255,.5);
+      padding: 12px 24px; border-radius: var(--radius);
+      font-size: 14px; font-weight: 600; white-space: nowrap;
+      transition: all .2s;
+    }
+    .btn-ghost-white:hover { border-color: white; background: rgba(255,255,255,.08); }
+
+    /* ============================================================
+       RESPONSIVE TWEAKS
+    ============================================================ */
+    @media (max-width: 900px) {
+      nav { padding: 0 20px; }
+      .nav-links { display: none; }
+      h1 { font-size: 36px; }
+      .home-hero { padding: 60px 20px; }
+      .section, .section-sm { padding: 48px 20px; }
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+      .hero-stats { grid-template-columns: repeat(2, 1fr); }
+      .demo-layout, .brief-layout { grid-template-columns: 1fr; }
+      .case-study { grid-template-columns: 1fr; }
+      .tab-panel.active { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      .obs-hero .container { grid-template-columns: 1fr; }
+      .obs-hero h1 { font-size: 36px; }
+      .obs-hero { padding: 60px 20px 56px; }
+      .challenge-grid { grid-template-columns: 1fr 1fr; }
+      .product-row { grid-template-columns: 1fr 1fr; }
+      .inline-cta { grid-template-columns: 1fr; }
+      .testimonial-section { padding: 60px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ============================================================
+     NAVIGATION
+============================================================ -->
+<nav>
+  <div class="nav-logo" onclick="showPage('home')">
+    NET<span>SCOUT</span>
+  </div>
+  <div class="nav-links">
+    <a onclick="showPage('observability'); track('Visit Solution Page', {link:'Network Observability', location:'nav'})">Network Observability</a>
+    <a onclick="showPage('solutions')">Solutions</a>
+    <a onclick="showPage('ngenius')">Products</a>
+    <a onclick="showPage('resources')">Resources</a>
+    <a href="https://my.netscout.com" target="_blank">myNETSCOUT Login</a>
+  </div>
+  <button class="nav-cta" onclick="showPage('demo'); track('CTA Click', {cta_name:'Nav Unlock Demo', location:'navigation'})">
+    Unlock Demo
+  </button>
+</nav>
+
+<!-- ============================================================
+     PAGE 1: HOME — HEATMAPS PAGE
+============================================================ -->
+<div id="page-home" class="page active">
+
+  <!-- HERO -->
+  <div class="home-hero">
+    <div class="container">
+      <div class="hero-badge"><span class="dot"></span> Trusted by 90% of Fortune 100 Companies</div>
+      <h1>Gain unmatched visibility<br><span>with the data that drives observability</span></h1>
+      <p class="lead">
+        Fortify security and fuel resilience. When you know the root cause of problems, you can ensure your network supports business initiatives that drive success and growth.
+      </p>
+      <div class="hero-ctas">
+        <button class="btn-primary" onclick="showPage('demo'); track('CTA Click', {cta_name:'Hero Unlock Demo', location:'hero_primary'})">
+          ▶ Unlock your immersive experience
+        </button>
+        <button class="btn-white" onclick="showPage('resources'); track('Download Arbor DDoS Report', {cta_name:'Hero Explore Report', location:'hero_secondary'})">
+          Explore the 2H2025 Report
+        </button>
+      </div>
+
+      <div class="hero-stats">
+        <div class="stat-item">
+          <div class="stat-num">90<span>%</span></div>
+          <div class="stat-label">of Fortune 100 Trust NETSCOUT</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">100<span>+</span></div>
+          <div class="stat-label">Countries Served</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">4.6<span>/5</span></div>
+          <div class="stat-label">G2 Customer Rating</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">16<span>th</span></div>
+          <div class="stat-label">Issue DDoS Threat Intelligence Report</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEATURED REPORT BANNER -->
+  <div class="section-sm" style="background: var(--gray-50);">
+    <div class="container">
+      <div class="problem-banner">
+        <span class="icon">📊</span>
+        <p><strong>JUST RELEASED: 2H2025 DDoS Threat Intelligence Report.</strong> Explore the latest insights into the global DDoS landscape and emerging botnet-driven attack tactics. <a onclick="showPage('resources'); track('Download Arbor DDoS Report',{cta_name:'Report Banner Link',location:'featured_banner'})" style="color: var(--orange); font-weight:700; cursor:pointer; text-decoration:underline">Explore the report →</a></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SOLUTIONS GRID -->
+  <div class="section">
+    <div class="container">
+      <div style="text-align:center; margin-bottom: 48px;">
+        <div class="tag">Solutions</div>
+        <h2>Solutions for the World's Largest Enterprises and Service Providers</h2>
+        <p class="lead" style="margin: 12px auto 0;">We've redefined visibility to tackle the observability, cybersecurity, and AI challenges of the world's largest, most complex organizations.</p>
+      </div>
+      <div class="grid-3">
+        <div class="card product-card ngenius" onclick="showPage('ngenius'); track('Visit Solution Page', {product:'Observability', location:'home_solutions_grid'})">
+          <div class="icon-box">🌐</div>
+          <h3>Observability</h3>
+          <p>Achieve unmatched visibility across any data center, any cloud, or any network to assure the best user experience and digital service performance.</p>
+          <div class="product-link">Learn more →</div>
+        </div>
+        <div class="card product-card" style="cursor:pointer;" onclick="track('Visit Solution Page', {product:'Carrier Service Assurance', location:'home_solutions_grid'})">
+          <div class="icon-box">📡</div>
+          <h3>Carrier Service Assurance</h3>
+          <p>Unmatched visibility into all service provider networks and services — actionable data insights to assure user experience.</p>
+          <div class="product-link">Learn more →</div>
+        </div>
+        <div class="card product-card" style="cursor:pointer;" onclick="track('Visit Solution Page', {product:'AI Insights', location:'home_solutions_grid'})">
+          <div class="icon-box">🤖</div>
+          <h3>AI Insights</h3>
+          <p>Take AIOps to the next level. Automate, enhance, and secure business outcomes with high-quality, curated telemetry data.</p>
+          <div class="product-link">Learn more →</div>
+        </div>
+        <div class="card product-card arbor" onclick="track('Visit Solution Page', {product:'Network Security', location:'home_solutions_grid'})">
+          <div class="icon-box">🛡️</div>
+          <h3>Network Security</h3>
+          <p>Scalable advanced NDR capabilities to keep the largest networks secure, powered by unmatched visibility and packet-level intelligence.</p>
+          <div class="product-link" style="color: var(--orange);">Learn more →</div>
+        </div>
+        <div class="card product-card omnis" onclick="track('Visit Solution Page', {product:'DDoS Protection', location:'home_solutions_grid'})">
+          <div class="icon-box">⚡</div>
+          <h3>DDoS Protection</h3>
+          <p>Maintain availability of key business services and applications with the DDoS protection solution trusted by the world's largest networks.</p>
+          <div class="product-link">Learn more →</div>
+        </div>
+        <div class="card product-card" style="background: #0D1117; color: white; cursor: pointer;" onclick="showPage('solutions'); track('Click Explore the Platform', {product:'All Solutions', location:'home_solutions_grid'})">
+          <div class="icon-box" style="background:rgba(255,255,255,.08); color:#5FD8DF; font-size:22px; font-weight:700;">→</div>
+          <h3 style="color:white;">Explore All Solutions</h3>
+          <p style="color:rgba(255,255,255,.65);">See how the Visibility Without Borders Platform addresses your biggest network challenges.</p>
+          <div class="product-link" style="color:#5FD8DF;">View all →</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROOF BAR -->
+  <div class="proof-bar section-sm">
+    <div class="container">
+      <p style="text-align:center; font-size:12px; text-transform:uppercase; letter-spacing:1.5px; color:var(--gray-300); margin-bottom:24px; font-weight:700;">Trusted by 90% of Fortune 100 Companies in more than 100 countries</p>
+      <div class="proof-logos">
+        <div class="proof-logo">IBM</div>
+        <div class="proof-logo">HSBC</div>
+        <div class="proof-logo">UnitedHealth</div>
+        <div class="proof-logo">Boeing</div>
+        <div class="proof-logo">Vodafone</div>
+        <div class="proof-logo">P&amp;G</div>
+        <div class="proof-logo">PayPal</div>
+        <div class="proof-logo">DHL</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTENT ENGAGEMENT SECTION -->
+  <div class="section" style="background: var(--gray-50);">
+    <div class="container">
+      <div style="margin-bottom: 40px;">
+        <div class="tag">Resources</div>
+        <h2>The Experts Agree</h2>
+        <p class="lead" style="margin-top: 8px;">From Cloud to Cybersecurity, DDoS and Mobile Networks, NETSCOUT is the recognized leader.</p>
+      </div>
+      <div class="grid-3">
+        <div class="card resource-card" onclick="showPage('resources'); track('Download Arbor DDoS Report',{resource:'ddos_threat_report', type:'report', location:'home_resources'})">
+          <div class="resource-thumb" style="background: linear-gradient(135deg,#0D1117,#1a2535);">
+            <span style="color: white; font-size:32px; font-weight:800; text-align:center;">DDoS<br>Threat<br>Report</span>
+          </div>
+          <div class="tag">Just Released</div>
+          <h4>2H2025 DDoS Threat Intelligence Report</h4>
+          <p>Explore Issue 16 of the DDoS Threat Intelligence Report powered by NETSCOUT's visibility into the world's internet traffic.</p>
+          <div class="product-link">Explore the report →</div>
+        </div>
+        <div class="card resource-card" onclick="showPage('demo'); track('View nGenius Live Demo',{resource:'observability_test_drive', type:'demo', location:'home_resources'})">
+          <div class="resource-thumb" style="background: linear-gradient(135deg,#00A8CC,#006699);">
+            <span style="color:white; font-size:36px; font-weight:800;">TEST<br>DRIVE</span>
+          </div>
+          <div class="tag">Interactive</div>
+          <h4>Observability Test Drive</h4>
+          <p>Explore our interactive Test Drive and discover how NETSCOUT delivers visibility like no other. Ready to see Observability in action?</p>
+          <div class="product-link">Unlock your immersive experience →</div>
+        </div>
+        <div class="card resource-card" onclick="showPage('webinar'); track('View Resource Library',{resource:'ddos_webinar', type:'webinar', location:'home_resources'})">
+          <div class="resource-thumb" style="background: linear-gradient(135deg,#0D1117,#1a2535);">
+            <span style="color:white; font-size:38px; font-weight:800;">LIVE</span>
+          </div>
+          <div class="tag">Webinar</div>
+          <h4>Unmasking the Swarm: Botnet-Driven DDoS Attacks</h4>
+          <p>Join our experts for an in-depth look at the evolving tactics of botnet-driven DDoS attacks and today's most sophisticated patterns.</p>
+          <div class="product-link" style="color: var(--orange);">Register Now →</div>
+        </div>
+      </div>
+
+      <!-- Industry recognition row -->
+      <div class="grid-4" style="margin-top: 24px;">
+        <div class="card" style="padding:20px; cursor:pointer;" onclick="track('View Resource Library',{resource:'frost_sullivan',type:'award',location:'home_resources_row2'})">
+          <div class="tag" style="font-size:10px;">Award</div>
+          <h4 style="font-size:15px; margin-bottom:6px;">Frost &amp; Sullivan 2025</h4>
+          <p style="font-size:13px;">Company of the Year Recognition for network observability and DDoS leadership</p>
+          <div class="product-link" style="font-size:13px; margin-top:12px;">Read →</div>
+        </div>
+        <div class="card" style="padding:20px; cursor:pointer;" onclick="track('View Resource Library',{resource:'qks_spark_ndr',type:'report',location:'home_resources_row2'})">
+          <div class="tag" style="font-size:10px;">Analyst Report</div>
+          <h4 style="font-size:15px; margin-bottom:6px;">QKS SPARK Matrix: NDR</h4>
+          <p style="font-size:13px;">Leader in packet-derived, ML-enriched network detection and response capabilities</p>
+          <div class="product-link" style="font-size:13px; margin-top:12px;">Download →</div>
+        </div>
+        <div class="card" style="padding:20px; cursor:pointer;" onclick="track('View Resource Library',{resource:'qks_spark_observability',type:'report',location:'home_resources_row2'})">
+          <div class="tag" style="font-size:10px;">Analyst Report</div>
+          <h4 style="font-size:15px; margin-bottom:6px;">QKS SPARK Matrix: Observability</h4>
+          <p style="font-size:13px;">Recognized leader in Network Observability with high-impact digital performance at scale</p>
+          <div class="product-link" style="font-size:13px; margin-top:12px;">Download →</div>
+        </div>
+        <div class="card" style="padding:20px; cursor:pointer;" onclick="track('View Resource Library',{resource:'cybersecurity_breakthrough',type:'award',location:'home_resources_row2'})">
+          <div class="tag" style="font-size:10px;">Award</div>
+          <h4 style="font-size:15px; margin-bottom:6px;">Cybersecurity Breakthrough 2025</h4>
+          <p style="font-size:13px;">Overall Network Security Solution of the Year — Cybersecurity Breakthrough Awards</p>
+          <div class="product-link" style="font-size:13px; margin-top:12px;">Read →</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA BAND — Main Call to Action -->
+  <div class="cta-section">
+    <div class="container">
+      <h2>Gain Unmatched Visibility for Your Most Complex Networks</h2>
+      <p>Experience how NETSCOUT delivers the intelligence you need to see, secure, and optimize everything.</p>
+      <div class="cta-group">
+        <button class="btn-white" onclick="showPage('demo'); track('CTA Click',{cta_name:'Home CTA Unlock Demo', location:'home_bottom_cta'})">
+          ▶ Unlock your immersive experience
+        </button>
+        <button onclick="showPage('solutions'); track('Click Explore the Platform',{cta_name:'Home CTA Explore Solutions', location:'home_bottom_cta'})" style="background:transparent; border:2px solid white; color:white; padding:14px 28px; border-radius:8px; font-size:15px; font-weight:700; cursor:pointer;">
+          Explore Solutions
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="nav-logo" style="margin-bottom:12px; color:white;">NET<span style="color:var(--teal)">SCOUT</span></div>
+          <p style="font-size:13px; max-width:260px; margin-bottom:8px;">Guardians of the Connected World®</p>
+          <p style="font-size:13px; max-width:260px; margin-bottom:16px;">Gain unmatched visibility with the data that drives observability, fortifies security, and fuels resilience.</p>
+          <p style="font-size:12px; color:rgba(255,255,255,.35);">© 2026 NETSCOUT Systems, Inc. · NASDAQ: NTCT</p>
+        </div>
+        <div class="footer-col">
+          <h4>Solutions</h4>
+          <ul>
+            <li onclick="showPage('ngenius'); track('Visit Solution Page',{link:'Observability'})">Observability</li>
+            <li onclick="track('Visit Solution Page',{link:'Carrier Service Assurance'})">Carrier Service Assurance</li>
+            <li onclick="track('Visit Solution Page',{link:'AI Insights'})">AI Insights</li>
+            <li onclick="track('Visit Solution Page',{link:'Network Security'})">Network Security (Omnis)</li>
+            <li onclick="track('Visit Solution Page',{link:'DDoS Protection'})">DDoS Protection (Arbor)</li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Resources</h4>
+          <ul>
+            <li onclick="showPage('resources'); track('Download Arbor DDoS Report',{link:'Threat Report'})">DDoS Threat Report</li>
+            <li onclick="showPage('brief'); track('Download Product Brief',{link:'Product Briefs'})">Product Briefs</li>
+            <li onclick="showPage('video'); track('Watch Product Video',{link:'Videos'})">Videos</li>
+            <li onclick="showPage('webinar'); track('View Resource Library',{link:'Webinars'})">Webinars</li>
+            <li onclick="track('View Blog',{link:'Blog'})">Blog</li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul>
+            <li onclick="track('CTA Click',{link:'About'})">About NETSCOUT</li>
+            <li onclick="track('CTA Click',{link:'Careers'})">Careers</li>
+            <li onclick="track('CTA Click',{link:'Partners'})">Partners</li>
+            <li onclick="track('CTA Click',{link:'Awards'})">Awards &amp; Recognition</li>
+            <li onclick="showPage('demo'); track('Contact Sales',{link:'Contact'})">Contact Us</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>Privacy Policy · Terms of Use · Cookie Settings · Accessibility</span>
+        <a href="https://my.netscout.com" target="_blank" style="color:rgba(255,255,255,.5);">myNETSCOUT Login</a>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- ============================================================
+     PAGE 2: nGENIUS SOLUTION PAGE
+============================================================ -->
+<div id="page-ngenius" class="page">
+  <div class="breadcrumb"><a onclick="showPage('home')">Home</a> › <span>Products</span> › nGenius</div>
+
+  <div class="solution-hero">
+    <div class="container">
+      <div class="grid-2" style="align-items: center; gap: 64px;">
+        <div>
+          <div class="tag">nGenius Platform</div>
+          <h1 style="font-size:44px; margin-bottom:16px;">Network Intelligence That Never Blinks</h1>
+          <p class="lead">Real-time visibility from packet to application — across campus, data center, and multi-cloud environments. No blind spots, no lag, no guessing.</p>
+          <div style="display:flex; gap:14px; margin-top:32px; flex-wrap:wrap;">
+            <button class="btn-primary" onclick="showPage('brief'); track('Download Product Brief',{cta_name:'nGenius Download Brief', location:'ngenius_hero'})">Download Platform Brief</button>
+            <button class="btn-secondary" onclick="showPage('demo'); track('Submit Demo Request',{cta_name:'nGenius Request Demo', location:'ngenius_hero'})">Request Demo</button>
+          </div>
+        </div>
+        <div style="background: linear-gradient(135deg,#0D1117,#1a2535); border-radius:16px; padding:40px; min-height:320px; display:flex; align-items:center; justify-content:center;">
+          <div style="width:100%;">
+            <p style="color:rgba(255,255,255,.50); font-size:12px; text-transform:uppercase; letter-spacing:1px; margin-bottom:16px;">Network Health Dashboard</p>
+            <div style="display:flex; gap:6px; align-items:flex-end; height:100px; margin-bottom:16px;">
+              <div style="flex:1; background:#00A8CC; border-radius:4px 4px 0 0; height:60%;"></div>
+              <div style="flex:1; background:#00A8CC; border-radius:4px 4px 0 0; height:80%;"></div>
+              <div style="flex:1; background:#F5821E; border-radius:4px 4px 0 0; height:95%;"></div>
+              <div style="flex:1; background:#00A8CC; border-radius:4px 4px 0 0; height:70%;"></div>
+              <div style="flex:1; background:#00A8CC; border-radius:4px 4px 0 0; height:85%;"></div>
+              <div style="flex:1; background:#00A8CC; border-radius:4px 4px 0 0; height:65%;"></div>
+              <div style="flex:1; background:#00A8CC; border-radius:4px 4px 0 0; height:75%;"></div>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;">
+              <div style="background:rgba(255,255,255,.08); border-radius:8px; padding:12px; text-align:center;">
+                <div style="color:#00A8CC; font-size:22px; font-weight:800;">99.2%</div>
+                <div style="color:rgba(255,255,255,.50); font-size:11px;">Uptime</div>
+              </div>
+              <div style="background:rgba(255,255,255,.08); border-radius:8px; padding:12px; text-align:center;">
+                <div style="color:#F5821E; font-size:22px; font-weight:800;">14ms</div>
+                <div style="color:rgba(255,255,255,.50); font-size:11px;">Latency</div>
+              </div>
+              <div style="background:rgba(255,255,255,.08); border-radius:8px; padding:12px; text-align:center;">
+                <div style="color:#00A8CC; font-size:22px; font-weight:800;">2.1T</div>
+                <div style="color:rgba(255,255,255,.50); font-size:11px;">Packets/sec</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Feature Tabs -->
+  <div class="section">
+    <div class="container">
+      <h2 style="text-align:center; margin-bottom:32px;">Explore nGenius Capabilities</h2>
+      <div class="feature-tabs" id="tabs">
+        <button class="tab-btn active" onclick="switchTab('tab-network')">Network Performance</button>
+        <button class="tab-btn" onclick="switchTab('tab-app')">Application Health</button>
+        <button class="tab-btn" onclick="switchTab('tab-cloud')">Multi-Cloud Visibility</button>
+      </div>
+
+      <div id="tab-network" class="tab-panel active">
+        <div>
+          <h3 style="margin-bottom:16px;">Real-Time Network Performance Monitoring</h3>
+          <p style="margin-bottom:20px;">Continuous, wire-speed visibility into network traffic with sub-second alerts — before users are impacted.</p>
+          <ul class="spec-list">
+            <li>Packet-level analysis at 100Gbps+ with no sampling</li>
+            <li>Intelligent baseline and adaptive thresholds</li>
+            <li>Automatic root cause correlation across 200+ metrics</li>
+            <li>Topology-aware impact analysis for faster triage</li>
+            <li>Integrates with Cisco, Juniper, Arista, and 40+ vendors</li>
+          </ul>
+          <button class="btn-primary" style="margin-top:28px;" onclick="showPage('video'); track('Watch Product Video',{cta_name:'nGenius Tab Watch Demo',location:'feature_tab_network'})">Watch Product Video →</button>
+        </div>
+        <div class="feature-visual">
+          <div style="width:100%; color:white;">
+            <p style="font-size:12px; opacity:.5; margin-bottom:8px; text-transform:uppercase; letter-spacing:1px;">Live Traffic Flow</p>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,.08); padding:10px 14px; border-radius:6px;">
+                <span style="font-size:13px; opacity:.8;">Core Backbone</span>
+                <div style="display:flex; gap:8px; align-items:center;">
+                  <div style="width:80px; height:6px; background:rgba(255,255,255,.2); border-radius:3px; overflow:hidden;">
+                    <div style="width:85%; height:100%; background:#00A8CC;"></div>
+                  </div>
+                  <span style="font-size:12px; color:#00A8CC;">85%</span>
+                </div>
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,.08); padding:10px 14px; border-radius:6px;">
+                <span style="font-size:13px; opacity:.8;">WAN Link East</span>
+                <div style="display:flex; gap:8px; align-items:center;">
+                  <div style="width:80px; height:6px; background:rgba(255,255,255,.2); border-radius:3px; overflow:hidden;">
+                    <div style="width:92%; height:100%; background:#F5821E;"></div>
+                  </div>
+                  <span style="font-size:12px; color:#F5821E;">92% ⚠</span>
+                </div>
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,.08); padding:10px 14px; border-radius:6px;">
+                <span style="font-size:13px; opacity:.8;">Data Center South</span>
+                <div style="display:flex; gap:8px; align-items:center;">
+                  <div style="width:80px; height:6px; background:rgba(255,255,255,.2); border-radius:3px; overflow:hidden;">
+                    <div style="width:45%; height:100%; background:#00A8CC;"></div>
+                  </div>
+                  <span style="font-size:12px; color:#00A8CC;">45%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-app" class="tab-panel">
+        <div>
+          <h3 style="margin-bottom:16px;">Application Performance Intelligence</h3>
+          <p style="margin-bottom:20px;">Trace application transactions end-to-end — from client browser to backend service — with zero blind spots.</p>
+          <ul class="spec-list">
+            <li>DPI-based classification of 3,000+ applications</li>
+            <li>User experience scoring (Apdex) across business apps</li>
+            <li>Unified view of SaaS, on-prem, and hybrid deployments</li>
+            <li>VoIP and UC quality monitoring (MOS, jitter, loss)</li>
+            <li>Synthetic transaction probing for proactive alerting</li>
+          </ul>
+          <button class="btn-primary" style="margin-top:28px;" onclick="showPage('demo'); track('Submit Demo Request',{cta_name:'App Tab Request Demo',location:'feature_tab_app'})">Request Demo →</button>
+        </div>
+        <div class="feature-visual">
+          <div style="color:white; width:100%;">
+            <p style="font-size:12px; opacity:.5; margin-bottom:8px; text-transform:uppercase; letter-spacing:1px;">Application Health Score</p>
+            <div style="font-size:64px; font-weight:800; color:#00A8CC; text-align:center; margin:20px 0;">4.2</div>
+            <p style="text-align:center; opacity:.6; font-size:13px; margin-bottom:20px;">Apdex Score — GOOD</p>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+              <div style="background:rgba(255,255,255,.08); border-radius:8px; padding:12px; text-align:center;">
+                <div style="color:#00A8CC; font-weight:800;">98.1%</div><div style="opacity:.5; font-size:11px;">Satisfied</div>
+              </div>
+              <div style="background:rgba(255,255,255,.08); border-radius:8px; padding:12px; text-align:center;">
+                <div style="color:#F5821E; font-weight:800;">1.9%</div><div style="opacity:.5; font-size:11px;">Frustrated</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-cloud" class="tab-panel">
+        <div>
+          <h3 style="margin-bottom:16px;">Multi-Cloud Network Visibility</h3>
+          <p style="margin-bottom:20px;">Extend nGenius to AWS, GCP, Azure, and private cloud — with consistent metrics across every environment.</p>
+          <ul class="spec-list">
+            <li>Native VPC flow log enrichment and correlation</li>
+            <li>East-west traffic visibility within cloud environments</li>
+            <li>Cloud egress cost optimization through traffic analysis</li>
+            <li>Consistent policy and alerting across hybrid environments</li>
+            <li>Kubernetes and containerized workload support</li>
+          </ul>
+          <button class="btn-primary" style="margin-top:28px;" onclick="showPage('brief'); track('Download Product Brief',{cta_name:'Cloud Tab Download Brief',location:'feature_tab_cloud'})">Download Cloud Brief →</button>
+        </div>
+        <div class="feature-visual">
+          <div style="color:white; width:100%; text-align:center;">
+            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px;">
+              <div style="background:rgba(255,153,0,.15); border:1px solid rgba(255,153,0,.3); border-radius:10px; padding:16px;">
+                <div style="font-size:28px; margin-bottom:8px;">☁</div>
+                <div style="font-size:12px; opacity:.7;">AWS</div>
+                <div style="color:#F5821E; font-size:11px; font-weight:700; margin-top:4px;">Connected ✓</div>
+              </div>
+              <div style="background:rgba(0,168,204,.15); border:1px solid rgba(0,168,204,.3); border-radius:10px; padding:16px;">
+                <div style="font-size:28px; margin-bottom:8px;">☁</div>
+                <div style="font-size:12px; opacity:.7;">GCP</div>
+                <div style="color:#00A8CC; font-size:11px; font-weight:700; margin-top:4px;">Connected ✓</div>
+              </div>
+              <div style="background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15); border-radius:10px; padding:16px;">
+                <div style="font-size:28px; margin-bottom:8px;">🏢</div>
+                <div style="font-size:12px; opacity:.7;">On-Prem</div>
+                <div style="color:#00A8CC; font-size:11px; font-weight:700; margin-top:4px;">Connected ✓</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom CTA -->
+  <div class="cta-section">
+    <div class="container">
+      <h2>See nGenius in Action</h2>
+      <p>15-minute live demo tailored to your environment. No slides — just your data, your questions.</p>
+      <div class="cta-group">
+        <button class="btn-white" onclick="showPage('demo'); track('Submit Demo Request',{cta_name:'nGenius Bottom CTA',location:'ngenius_bottom'})">Request Live Demo</button>
+        <button class="btn-white" onclick="showPage('video'); track('Watch Product Video',{cta_name:'nGenius Watch Video',location:'ngenius_bottom'})">Watch Product Video</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     PAGE 3: PRODUCT BRIEF DOWNLOAD
+============================================================ -->
+<div id="page-brief" class="page">
+  <div class="breadcrumb"><a onclick="showPage('home')">Home</a> › <a onclick="showPage('resources'); track('View Resource Library',{from:'brief'})">Resources</a> › Product Brief</div>
+
+  <div class="section">
+    <div class="container">
+      <div class="brief-layout">
+        <div>
+          <div class="tag">Product Brief</div>
+          <h1 style="font-size:40px; margin-bottom:16px;">nGenius Platform Data Sheet</h1>
+          <p class="lead" style="margin-bottom:32px;">Everything your team needs to evaluate nGenius: technical specs, deployment architectures, integration capabilities, and performance benchmarks.</p>
+
+          <div class="brief-preview">
+            <p style="font-size:11px; text-transform:uppercase; letter-spacing:1px; opacity:.5; margin-bottom:16px;">Preview — Page 1 of 8</p>
+            <h3 style="color:white; margin-bottom:12px;">nGenius Enterprise Platform</h3>
+            <p style="color:rgba(255,255,255,.65); font-size:14px; margin-bottom:20px;">Real-time network and application performance management at any scale</p>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:20px;">
+              <div style="background:rgba(255,255,255,.08); padding:14px; border-radius:8px;">
+                <div style="color:#00A8CC; font-weight:700; font-size:12px; text-transform:uppercase; margin-bottom:6px;">Capacity</div>
+                <div style="color:white; font-size:13px;">Up to 100Gbps per probe, no sampling</div>
+              </div>
+              <div style="background:rgba(255,255,255,.08); padding:14px; border-radius:8px;">
+                <div style="color:#00A8CC; font-weight:700; font-size:12px; text-transform:uppercase; margin-bottom:6px;">Latency</div>
+                <div style="color:white; font-size:13px;">Sub-second alerting, &lt;5ms processing</div>
+              </div>
+              <div style="background:rgba(255,255,255,.08); padding:14px; border-radius:8px;">
+                <div style="color:#00A8CC; font-weight:700; font-size:12px; text-transform:uppercase; margin-bottom:6px;">Apps</div>
+                <div style="color:white; font-size:13px;">3,000+ classified applications</div>
+              </div>
+              <div style="background:rgba(255,255,255,.08); padding:14px; border-radius:8px;">
+                <div style="color:#00A8CC; font-weight:700; font-size:12px; text-transform:uppercase; margin-bottom:6px;">Deployments</div>
+                <div style="color:white; font-size:13px;">On-prem, cloud, virtual, hybrid</div>
+              </div>
+            </div>
+            <div style="margin-top:24px; padding-top:20px; border-top:1px solid rgba(255,255,255,.12); color:rgba(255,255,255,.3); font-size:12px; text-align:center;">
+              🔒 Register to unlock all 8 pages
+            </div>
+          </div>
+        </div>
+
+        <!-- GATED FORM -->
+        <div>
+          <div class="form-card" id="brief-form-card">
+            <h3 style="margin-bottom:4px;">Download the Full Brief</h3>
+            <p style="font-size:14px; margin-bottom:24px;">Get instant access to all technical specifications and deployment guides.</p>
+
+            <form onsubmit="submitBriefForm(event)">
+              <div class="form-group">
+                <label>First Name *</label>
+                <input type="text" placeholder="Ali" required />
+              </div>
+              <div class="form-group">
+                <label>Last Name *</label>
+                <input type="text" placeholder="Amin" required />
+              </div>
+              <div class="form-group">
+                <label>Work Email *</label>
+                <input type="email" placeholder="ali.amin@netscout.com" required />
+              </div>
+              <div class="form-group">
+                <label>Company *</label>
+                <input type="text" placeholder="NETSCOUT Systems" required />
+              </div>
+              <div class="form-group">
+                <label>Job Title</label>
+                <input type="text" placeholder="Director of Marketing" />
+              </div>
+              <div class="form-group">
+                <label>Primary Interest</label>
+                <select>
+                  <option>Network Performance Management</option>
+                  <option>Application Performance</option>
+                  <option>Multi-Cloud Visibility</option>
+                  <option>DDoS Protection</option>
+                </select>
+              </div>
+              <button type="submit" class="btn-primary form-submit">Download Now — Free</button>
+              <p style="font-size:11px; color:var(--gray-300); margin-top:12px; text-align:center;">By submitting, you agree to our Privacy Policy. No spam, ever.</p>
+            </form>
+          </div>
+
+          <div class="success-state" id="brief-success">
+            <div class="success-icon">📄</div>
+            <h3 style="margin-bottom:8px;">Your Brief is Ready!</h3>
+            <p style="margin-bottom:24px;">Thanks! Your download has started. While you're here — see nGenius in action.</p>
+            <button class="btn-primary" onclick="showPage('video'); track('Watch Product Video',{cta_name:'Post Brief Watch Video',location:'brief_success'})">
+              ▶ Watch the Product Video
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     PAGE 4: PRODUCT VIDEO
+============================================================ -->
+<div id="page-video" class="page">
+  <div class="breadcrumb"><a onclick="showPage('home')">Home</a> › Resources › Product Video</div>
+
+  <div class="section">
+    <div class="container">
+      <div class="grid-2" style="gap: 48px; align-items: start;">
+        <div>
+          <div class="tag">Product Video</div>
+          <h1 style="font-size:36px; margin-bottom:12px;">nGenius Platform: 10-Minute Overview</h1>
+          <p style="margin-bottom:24px;">See real-time network intelligence, bot filtering, and ZoomInfo company-level analytics in action — with a live demo environment.</p>
+
+          <!-- VIDEO PLAYER -->
+          <div class="video-player" id="video-player" onclick="playVideo()">
+            <div class="video-overlay" id="video-overlay">
+              <div style="text-align:center; color:white;">
+                <div style="font-size:56px; margin-bottom:12px; opacity:.9;">🎬</div>
+                <h3 style="color:white; margin-bottom:6px;">nGenius Platform Overview</h3>
+                <p style="color:rgba(255,255,255,.65); font-size:14px;">10 min · Network Intelligence · Demo</p>
+                <div class="play-btn" style="margin:20px auto 0;">▶</div>
+              </div>
+            </div>
+            <div style="width:100%; background:linear-gradient(135deg,#001040,#001F5B); height:100%; display:flex; align-items:center; justify-content:center;" id="video-playing" style="display:none;">
+              <div style="color:white; text-align:center;">
+                <div style="font-size:20px; font-weight:700; margin-bottom:8px;">▶ Playing: nGenius Platform Overview</div>
+                <div id="video-time" style="font-size:14px; opacity:.6;">0:00 / 10:23</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="video-progress"><div class="video-progress-bar" id="progress-bar"></div></div>
+          <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--gray-300); margin-bottom:24px;">
+            <span id="time-elapsed">0:00</span><span>10:23</span>
+          </div>
+        </div>
+
+        <!-- CHAPTERS + CTA -->
+        <div>
+          <h3 style="margin-bottom:16px;">Video Chapters</h3>
+          <div class="chapter-list" id="chapters">
+            <div class="chapter-item active" onclick="selectChapter(this, '0:00', 'Introduction & The Bot Traffic Problem')">
+              <span class="chapter-time">0:00</span>
+              <div><div style="font-size:14px; font-weight:600;">Introduction</div><div style="font-size:12px; color:var(--gray-600);">The bot traffic problem & why GA4 is broken</div></div>
+            </div>
+            <div class="chapter-item" onclick="selectChapter(this, '2:10', 'Bot Filtering & Clean Data')">
+              <span class="chapter-time">2:10</span>
+              <div><div style="font-size:14px; font-weight:600;">Bot Filtering & Clean Data</div><div style="font-size:12px; color:var(--gray-600);">Block 40K bots, trust your dashboards</div></div>
+            </div>
+            <div class="chapter-item" onclick="selectChapter(this, '4:30', 'ZoomInfo Company-Level Analytics')">
+              <span class="chapter-time">4:30</span>
+              <div><div style="font-size:14px; font-weight:600;">ZoomInfo Integration</div><div style="font-size:12px; color:var(--gray-600);">De-anonymize traffic by company, industry & size</div></div>
+            </div>
+            <div class="chapter-item" onclick="selectChapter(this, '6:45', 'nGenius Live Demo Dashboard')">
+              <span class="chapter-time">6:45</span>
+              <div><div style="font-size:14px; font-weight:600;">Live Demo Dashboard</div><div style="font-size:12px; color:var(--gray-600);">Self-serve analytics in under 5 minutes</div></div>
+            </div>
+            <div class="chapter-item" onclick="selectChapter(this, '8:55', 'AI Visibility & Next Steps')">
+              <span class="chapter-time">8:55</span>
+              <div><div style="font-size:14px; font-weight:600;">AI Visibility</div><div style="font-size:12px; color:var(--gray-600);">Monitor netscout.com in AI-generated results</div></div>
+            </div>
+          </div>
+
+          <div style="background: var(--gray-50); border-radius:12px; padding:24px; margin-top:24px; border: 1px solid var(--gray-100);">
+            <h4 style="margin-bottom:8px;">Ready to see this live?</h4>
+            <p style="font-size:13px; margin-bottom:16px;">Join our upcoming webinar or book a personalized demo with your data.</p>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              <button class="btn-primary" onclick="showPage('webinar'); track('Register for Webinar',{cta_name:'Video CTA Register Webinar',location:'video_sidebar'})">Register for Webinar →</button>
+              <button class="btn-secondary" onclick="showPage('demo'); track('Submit Demo Request',{cta_name:'Video CTA Request Demo',location:'video_sidebar'})">Request Demo</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     PAGE 5: WEBINAR
+============================================================ -->
+<div id="page-webinar" class="page">
+  <div class="breadcrumb"><a onclick="showPage('home')">Home</a> › Events › Webinar</div>
+
+  <div class="section">
+    <div class="container">
+      <div class="grid-2" style="gap: 48px; align-items: start;">
+        <div>
+          <div class="webinar-card">
+            <div class="tag" style="color:#f9a55a; background:rgba(245,130,30,.2);">Live Webinar</div>
+            <h2>DDoS Threat Landscape 2025:<br>What's Changed & How to Respond</h2>
+            <div class="webinar-meta">
+              <div class="webinar-meta-item">📅 <span>May 20, 2025 — 2:00 PM ET</span></div>
+              <div class="webinar-meta-item">⏱ <span>60 minutes</span></div>
+              <div class="webinar-meta-item">🎤 <span>3 speakers</span></div>
+            </div>
+            <p style="color:rgba(255,255,255,.75); font-size:14px; margin-bottom:20px;">Join NETSCOUT security experts and a guest from Arbor Networks for a deep dive into 2025's most sophisticated DDoS attack patterns — and how organizations like yours are defending against them.</p>
+            <h4 style="color:white; margin-bottom:12px;">What You'll Learn</h4>
+            <ul class="webinar-agenda">
+              <li><span></span>Top 5 DDoS attack vectors trending in 2025</li>
+              <li><span></span>How multi-vector attacks are bypassing legacy defenses</li>
+              <li><span></span>Arbor's always-on vs. on-demand hybrid mitigation approach</li>
+              <li><span></span>Real case studies from telecom and financial services sectors</li>
+              <li><span></span>Live Q&A with NETSCOUT security engineers</li>
+            </ul>
+          </div>
+
+          <!-- Post-registration section (hidden until registered) -->
+          <div id="join-section">
+            <div style="background: rgba(0,168,204,.08); border: 1px solid rgba(0,168,204,.3); border-radius:12px; padding:24px; margin-top:0;">
+              <h3 style="color:var(--teal); margin-bottom:8px;">🎉 You're registered!</h3>
+              <p style="font-size:14px; margin-bottom:16px;">A confirmation email is on its way. The webinar starts in <strong>3 days, 4 hours</strong>.</p>
+              <button class="btn-primary" onclick="showPage('demo'); track('Submit Demo Request',{cta_name:'Post Webinar Request Demo',location:'webinar_post_registration'})">
+                While you wait — Request a Demo →
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- REGISTRATION FORM -->
+        <div>
+          <div class="form-card" id="webinar-form-card">
+            <h3 style="margin-bottom:4px;">Save Your Seat</h3>
+            <p style="font-size:14px; color:var(--gray-600); margin-bottom:24px;">Free to attend. Limited seats available.</p>
+
+            <form onsubmit="submitWebinarForm(event)">
+              <div class="form-group">
+                <label>First Name *</label>
+                <input type="text" placeholder="Ali" required />
+              </div>
+              <div class="form-group">
+                <label>Work Email *</label>
+                <input type="email" placeholder="ali@netscout.com" required />
+              </div>
+              <div class="form-group">
+                <label>Company *</label>
+                <input type="text" placeholder="NETSCOUT Systems" required />
+              </div>
+              <div class="form-group">
+                <label>Job Role</label>
+                <select>
+                  <option>NetOps Engineer</option>
+                  <option>IT Security</option>
+                  <option>IT Manager</option>
+                  <option>CTO/VP Engineering</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>What's your biggest DDoS concern today?</label>
+                <select>
+                  <option>Multi-vector attack complexity</option>
+                  <option>Protecting cloud workloads</option>
+                  <option>Response time & automation</option>
+                  <option>Regulatory compliance</option>
+                </select>
+              </div>
+              <button type="submit" class="btn-primary form-submit">Register — Free</button>
+            </form>
+          </div>
+
+          <div class="success-state" id="webinar-success">
+            <div class="success-icon">✅</div>
+            <h3>You're In!</h3>
+            <p style="margin-bottom:20px;">Check your email for the calendar invite and joining link.</p>
+            <button class="btn-primary" onclick="showPage('demo'); track('Submit Demo Request',{cta_name:'Post Webinar Success CTA',location:'webinar_success'})">
+              Request a Personalized Demo →
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     PAGE 6: REQUEST DEMO
+============================================================ -->
+<div id="page-demo" class="page">
+  <div class="breadcrumb"><a onclick="showPage('home')">Home</a> › Request Demo</div>
+
+  <div class="demo-hero">
+    <div class="container">
+      <div class="demo-layout">
+        <div>
+          <div class="tag">Request a Demo</div>
+          <h1 style="font-size:40px; margin-bottom:16px;">See NETSCOUT With Your Own Data</h1>
+          <p class="lead" style="margin-bottom:8px;">A 30-minute live session tailored to your environment. No sales pitch — just answers.</p>
+          <ul class="demo-benefits">
+            <li><span class="check">✓</span> Live bot filtering demo using real traffic patterns from your industry</li>
+            <li><span class="check">✓</span> ZoomInfo company-level de-anonymization walkthrough</li>
+            <li><span class="check">✓</span> Self-serve dashboard builder — no analyst required</li>
+            <li><span class="check">✓</span> AI Visibility monitoring for your brand in LLM search results</li>
+            <li><span class="check">✓</span> Session Replay + Heatmaps on your actual website</li>
+          </ul>
+        </div>
+
+        <!-- DEMO FORM -->
+        <div class="form-card" id="demo-form-card">
+          <h3 style="margin-bottom:4px;">Request Your Demo</h3>
+          <p style="font-size:14px; color:var(--gray-600); margin-bottom:20px;">Typically scheduled within 48 hours.</p>
+
+          <form onsubmit="submitDemoForm(event)">
+            <div class="grid-2" style="gap:14px;">
+              <div class="form-group" style="margin-bottom:0;">
+                <label>First Name *</label>
+                <input type="text" placeholder="Pamela" required />
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <label>Last Name *</label>
+                <input type="text" placeholder="Jacques" required />
+              </div>
+            </div>
+            <div class="form-group" style="margin-top:16px;">
+              <label>Work Email *</label>
+              <input type="email" placeholder="pamela.jacques@netscout.com" required />
+            </div>
+            <div class="form-group">
+              <label>Company *</label>
+              <input type="text" placeholder="NETSCOUT Systems" required />
+            </div>
+            <div class="form-group">
+              <label>Job Title *</label>
+              <input type="text" placeholder="Global VP Corporate Marketing" required />
+            </div>
+            <div class="form-group">
+              <label>Company Size</label>
+              <select>
+                <option>1,000–5,000 employees</option>
+                <option>5,000–10,000 employees</option>
+                <option>10,000–50,000 employees</option>
+                <option>50,000+ employees</option>
+              </select>
+            </div>
+
+            <p style="font-size:13px; font-weight:600; color:var(--gray-900); margin-bottom:10px;">Areas of Interest</p>
+            <div class="interest-grid" id="interest-grid">
+              <button type="button" class="interest-btn" onclick="toggleInterest(this)">🌐 Network Analytics</button>
+              <button type="button" class="interest-btn selected" onclick="toggleInterest(this)">🤖 Bot Filtering</button>
+              <button type="button" class="interest-btn selected" onclick="toggleInterest(this)">🏢 ZoomInfo Integration</button>
+              <button type="button" class="interest-btn" onclick="toggleInterest(this)">🎥 Session Replay</button>
+              <button type="button" class="interest-btn" onclick="toggleInterest(this)">🧪 Experimentation</button>
+              <button type="button" class="interest-btn selected" onclick="toggleInterest(this)">🔍 AI Visibility</button>
+            </div>
+
+            <div class="form-group">
+              <label>Anything specific you'd like us to focus on?</label>
+              <input type="text" placeholder="e.g. bot filtering + ZoomInfo for marketing analytics" />
+            </div>
+            <button type="submit" class="btn-primary form-submit">Request My Demo →</button>
+            <p style="font-size:11px; color:var(--gray-300); margin-top:12px; text-align:center;">No commitment required. Response within 1 business day.</p>
+          </form>
+        </div>
+
+        <div class="success-state" id="demo-success">
+          <div class="success-icon">🎉</div>
+          <h3>Demo Request Received!</h3>
+          <p style="margin-bottom:24px;">Our team will reach out within 1 business day to confirm your session. Want to pick a time now?</p>
+          <button class="btn-primary" onclick="showPage('call'); track('Schedule Discovery Call',{cta_name:'Post Demo Book Call',location:'demo_success'})">
+            📅 Book Your Time Slot →
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     PAGE 5b: SOLUTIONS
+============================================================ -->
+<div id="page-solutions" class="page">
+  <div class="breadcrumb"><a onclick="showPage('home')">Home</a> › Solutions</div>
+
+  <div class="section">
+    <div class="container">
+      <div style="text-align:center; margin-bottom:64px;">
+        <h1>Solutions for the World's Largest Enterprises</h1>
+        <p class="lead" style="margin-top:16px;">We've redefined visibility to tackle the observability, cybersecurity, and AI challenges of the world's largest, most complex organizations.</p>
+      </div>
+
+      <div class="grid-2" style="gap: 48px; margin-bottom: 80px;">
+        <div>
+          <h3 style="margin-bottom:12px;">Mission-Critical Applications</h3>
+          <p style="margin-bottom:20px;">Ensure peak performance and uptime for applications that drive your business. Get root-cause analysis in real-time.</p>
+          <button class="btn-secondary" onclick="showPage('demo'); track('Visit Solution Page',{solution:'Mission-Critical Apps'})">Learn more →</button>
+        </div>
+        <div>
+          <h3 style="margin-bottom:12px;">Digital Transformation</h3>
+          <p style="margin-bottom:20px;">Accelerate cloud and hybrid migrations with complete visibility into every transition and dependency.</p>
+          <button class="btn-secondary" onclick="showPage('demo'); track('Visit Solution Page',{solution:'Digital Transformation'})">Learn more →</button>
+        </div>
+        <div>
+          <h3 style="margin-bottom:12px;">DDoS Attack Protection</h3>
+          <p style="margin-bottom:20px;">Maintain availability with industry-leading DDoS mitigation deployed across global networks.</p>
+          <button class="btn-secondary" onclick="showPage('demo'); track('Visit Solution Page',{solution:'DDoS Protection'})">Learn more →</button>
+        </div>
+        <div>
+          <h3 style="margin-bottom:12px;">AI-Driven Operations</h3>
+          <p style="margin-bottom:20px;">Take AIOps to the next level with high-quality, curated telemetry data that powers better automation.</p>
+          <button class="btn-secondary" onclick="showPage('demo'); track('Visit Solution Page',{solution:'AI Operations'})">Learn more →</button>
+        </div>
+        <div>
+          <h3 style="margin-bottom:12px;">Remote and Branch Offices</h3>
+          <p style="margin-bottom:20px;">Maintain enterprise-grade visibility and security across distributed office networks.</p>
+          <button class="btn-secondary" onclick="showPage('demo'); track('Visit Solution Page',{solution:'Remote Offices'})">Learn more →</button>
+        </div>
+        <div>
+          <h3 style="margin-bottom:12px;">Business Analytics</h3>
+          <p style="margin-bottom:20px;">Transform raw network data into actionable business insights and KPIs.</p>
+          <button class="btn-secondary" onclick="showPage('demo'); track('Visit Solution Page',{solution:'Analytics'})">Learn more →</button>
+        </div>
+      </div>
+
+      <div style="background: var(--gray-50); border-radius: 16px; padding: 48px; text-align: center;">
+        <h2>Ready to transform your visibility?</h2>
+        <p class="lead" style="margin: 16px auto 32px;">See how NETSCOUT addresses your most complex challenges.</p>
+        <button class="btn-primary" onclick="showPage('demo'); track('CTA Click',{cta_name:'Solutions CTA',location:'solutions_page'})">
+          Unlock your immersive experience
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     PAGE 5c: RESOURCES
+============================================================ -->
+<div id="page-resources" class="page">
+  <div class="breadcrumb"><a onclick="showPage('home')">Home</a> › Resources</div>
+
+  <div class="section">
+    <div class="container">
+      <div style="text-align:center; margin-bottom:64px;">
+        <h1>Resources & Insights</h1>
+        <p class="lead" style="margin-top:16px;">Stay ahead of network and security trends with our latest research, reports, and expert content.</p>
+      </div>
+
+      <div class="grid-3" style="margin-bottom: 64px;">
+        <div class="card" style="border: 2px solid var(--teal); cursor: pointer;" onclick="showPage('resources'); track('Download Arbor DDoS Report',{resource:'2H2025 Report'})">
+          <div style="font-size: 40px; margin-bottom: 16px;">📊</div>
+          <h3>2H2025 DDoS Threat Intelligence Report</h3>
+          <p>Explore the latest insights into the global DDoS landscape and emerging botnet-driven attack tactics powered by NETSCOUT's visibility into world internet traffic.</p>
+          <div style="color: var(--orange); font-weight: 700; margin-top: 16px;">Read the report →</div>
+        </div>
+        <div class="card" style="cursor: pointer;" onclick="showPage('video'); track('Watch Product Video',{resource:'Test Drive'})">
+          <div style="font-size: 40px; margin-bottom: 16px;">🎮</div>
+          <h3>Interactive Test Drive</h3>
+          <p>Experience NETSCOUT observability in action with our interactive demo. Discover how we deliver visibility like no other.</p>
+          <div style="color: var(--teal); font-weight: 700; margin-top: 16px;">Start the demo →</div>
+        </div>
+        <div class="card" style="cursor: pointer;" onclick="showPage('brief'); track('Download Product Brief',{resource:'Platform Brief'})">
+          <div style="font-size: 40px; margin-bottom: 16px;">📋</div>
+          <h3>Platform Overview Brief</h3>
+          <p>Get a comprehensive overview of the NETSCOUT Visibility Without Borders platform and its key capabilities.</p>
+          <div style="color: var(--teal); font-weight: 700; margin-top: 16px;">Download PDF →</div>
+        </div>
+      </div>
+
+      <div style="background: linear-gradient(135deg, var(--navy) 0%, var(--navy-dark) 100%); border-radius: 16px; padding: 48px; color: white; text-align: center;">
+        <h2 style="color: white; margin-bottom: 16px;">Recognized Industry Leader</h2>
+        <p style="color: rgba(255,255,255,.75); margin-bottom: 32px;">NETSCOUT has been recognized by leading analysts for excellence in network observability, network detection and response, and DDoS mitigation.</p>
+        <div class="grid-3" style="gap: 24px;">
+          <div style="background: rgba(255,255,255,.08); padding: 20px; border-radius: 8px;">
+            <div style="font-size: 24px; font-weight: 700; margin-bottom: 8px;">Frost & Sullivan</div>
+            <div style="font-size: 13px; opacity: .8;">2025 Company of the Year</div>
+          </div>
+          <div style="background: rgba(255,255,255,.08); padding: 20px; border-radius: 8px;">
+            <div style="font-size: 24px; font-weight: 700; margin-bottom: 8px;">Cybersecurity Breakthrough</div>
+            <div style="font-size: 13px; opacity: .8;">2025 Overall Network Security</div>
+          </div>
+          <div style="background: rgba(255,255,255,.08); padding: 20px; border-radius: 8px;">
+            <div style="font-size: 24px; font-weight: 700; margin-bottom: 8px;">QKS SPARK Matrix</div>
+            <div style="font-size: 13px; opacity: .8;">Leader in NDR & Observability</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     PAGE 7: BOOK DISCOVERY CALL
+============================================================ -->
+<div id="page-call" class="page">
+  <div class="breadcrumb"><a onclick="showPage('home')">Home</a> › <a onclick="showPage('demo')">Request Demo</a> › Book a Time</div>
+
+  <div class="section">
+    <div class="container">
+      <div class="grid-2" style="gap: 64px; align-items: start;">
+        <div>
+          <div class="tag">Discovery Call</div>
+          <h1 style="font-size:38px; margin-bottom:16px;">Pick Your Time</h1>
+          <p class="lead" style="margin-bottom:28px;">30-minute session with a NETSCOUT Solutions Engineer. We'll tailor the demo to your environment.</p>
+          <div style="display:flex; flex-direction:column; gap:16px;">
+            <div style="display:flex; gap:14px; align-items:flex-start;">
+              <span style="font-size:22px;">👤</span>
+              <div><h4 style="margin-bottom:2px;">Your SE: Eddie Chiang</h4><p style="font-size:13px;">Network Observability Specialist, Enterprise · EST</p></div>
+            </div>
+            <div style="display:flex; gap:14px; align-items:flex-start;">
+              <span style="font-size:22px;">⏱</span>
+              <div><h4 style="margin-bottom:2px;">30 Minutes</h4><p style="font-size:13px;">Discovery + live demo, tailored to your stack</p></div>
+            </div>
+            <div style="display:flex; gap:14px; align-items:flex-start;">
+              <span style="font-size:22px;">🎯</span>
+              <div><h4 style="margin-bottom:2px;">What to Expect</h4><p style="font-size:13px;">Bot filtering demo, ZoomInfo walkthrough, AI Visibility overview, Q&A</p></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CALENDAR WIDGET -->
+        <div>
+          <div class="calendar-widget" id="calendar-widget">
+            <div class="cal-header">
+              <button class="cal-nav">‹</button>
+              <span style="font-weight:700;">May 2025</span>
+              <button class="cal-nav">›</button>
+            </div>
+            <div class="cal-grid">
+              <div class="cal-days">
+                <div class="cal-day-label">Sun</div><div class="cal-day-label">Mon</div><div class="cal-day-label">Tue</div><div class="cal-day-label">Wed</div><div class="cal-day-label">Thu</div><div class="cal-day-label">Fri</div><div class="cal-day-label">Sat</div>
+              </div>
+              <div class="cal-days" id="cal-dates"></div>
+            </div>
+
+            <div class="time-slots" id="time-slots" style="display:none;">
+              <button class="time-slot" onclick="selectTime(this, '9:00 AM')">9:00 AM</button>
+              <button class="time-slot" onclick="selectTime(this, '10:00 AM')">10:00 AM</button>
+              <button class="time-slot" onclick="selectTime(this, '11:00 AM')">11:00 AM</button>
+              <button class="time-slot" onclick="selectTime(this, '1:00 PM')">1:00 PM</button>
+              <button class="time-slot" onclick="selectTime(this, '2:00 PM')">2:00 PM</button>
+              <button class="time-slot" onclick="selectTime(this, '3:30 PM')">3:30 PM</button>
+            </div>
+          </div>
+
+          <div class="confirmation-card" id="confirmation-card">
+            <div style="font-size:52px; margin-bottom:16px;">✅</div>
+            <h3 style="margin-bottom:8px;">You're All Set!</h3>
+            <p id="confirm-text" style="margin-bottom:20px; color:var(--gray-600);"></p>
+            <div style="background:var(--gray-100); border-radius:8px; padding:16px; margin-bottom:20px; font-size:14px; color:var(--gray-600);">
+              A calendar invite from <strong>eddie.chiang@amplitude.com</strong> is on its way.
+            </div>
+            <button class="btn-primary" onclick="showPage('home'); track('CTA Click',{cta_name:'Post Booking Return Home',location:'call_confirmation'})">
+              Back to NETSCOUT Home
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     PAGE: NETWORK OBSERVABILITY LANDING PAGE
+============================================================ -->
+<div id="page-observability" class="page">
+
+  <!-- HERO -->
+  <div class="obs-hero">
+    <div class="container">
+      <div>
+        <div class="hero-badge" style="margin-bottom:24px;"><span class="dot"></span> Network Observability Solution</div>
+        <h1>Transform IT from<br><em>Reactive to Predictive</em><br>with Enterprise-Wide Visibility</h1>
+        <p class="lead">
+          Eliminate blind spots across every network edge, cloud, and application layer. NETSCOUT delivers the unmatched telemetry your teams need to prevent outages — not just react to them.
+        </p>
+        <div class="obs-hero-ctas">
+          <button class="btn-primary" onclick="showPage('demo'); track('CTA Click', {cta_name:'Observability Hero Get Demo', location:'obs_hero_primary'})">
+            ▶ Get a Personalized Demo
+          </button>
+          <button class="btn-white" onclick="showPage('brief'); track('Download Product Brief', {cta_name:'Observability Hero Download Brief', location:'obs_hero_secondary'})">
+            Download Solution Brief
+          </button>
+        </div>
+      </div>
+
+      <!-- Hero Visual Dashboard -->
+      <div class="obs-hero-visual">
+        <p style="font-size:11px; text-transform:uppercase; letter-spacing:1.2px; color:rgba(255,255,255,.4); margin-bottom:16px;">Network Observability Dashboard — Live</p>
+        <div class="obs-metric-row">
+          <div class="obs-metric ok">
+            <div class="num">99.7%</div>
+            <div class="lbl">Network Uptime</div>
+          </div>
+          <div class="obs-metric warn">
+            <div class="num">14ms</div>
+            <div class="lbl">Avg Latency ▲</div>
+          </div>
+          <div class="obs-metric ok">
+            <div class="num">3.2T</div>
+            <div class="lbl">Packets / sec</div>
+          </div>
+        </div>
+        <div class="obs-flow">
+          <div class="obs-flow-item">
+            <span class="label">SD-WAN (Nationwide)</span>
+            <div class="bar-wrap">
+              <div class="obs-bar"><div class="obs-bar-fill teal" style="width:78%"></div></div>
+              <span style="font-size:12px; color:#5FD8DF; min-width:32px;">78%</span>
+            </div>
+          </div>
+          <div class="obs-flow-item">
+            <span class="label">AWS VPC East</span>
+            <div class="bar-wrap">
+              <div class="obs-bar"><div class="obs-bar-fill green" style="width:55%"></div></div>
+              <span style="font-size:12px; color:#3EBA8F; min-width:32px;">55%</span>
+            </div>
+          </div>
+          <div class="obs-flow-item">
+            <span class="label">WAN Link Chicago</span>
+            <div class="bar-wrap">
+              <div class="obs-bar"><div class="obs-bar-fill orange" style="width:91%"></div></div>
+              <span style="font-size:12px; color:#F5821E; min-width:32px;">91% ⚠</span>
+            </div>
+          </div>
+          <div class="obs-flow-item">
+            <span class="label">Data Center Core</span>
+            <div class="bar-wrap">
+              <div class="obs-bar"><div class="obs-bar-fill teal" style="width:63%"></div></div>
+              <span style="font-size:12px; color:#5FD8DF; min-width:32px;">63%</span>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:16px; padding:12px 14px; background:rgba(245,130,30,.12); border:1px solid rgba(245,130,30,.3); border-radius:8px; display:flex; gap:10px; align-items:center;">
+          <span style="font-size:16px;">⚠</span>
+          <span style="font-size:12px; color:#F5821E; font-weight:600;">Alert: WAN Chicago approaching capacity threshold — investigate link utilization</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SOCIAL PROOF STRIP -->
+  <div class="proof-bar section-sm">
+    <div class="container">
+      <p style="text-align:center; font-size:11px; text-transform:uppercase; letter-spacing:1.5px; color:var(--gray-300); margin-bottom:20px; font-weight:700;">Trusted by 90% of Fortune 100 Companies in 100+ Countries</p>
+      <div class="proof-logos">
+        <div class="proof-logo">DuPont</div>
+        <div class="proof-logo">HSBC</div>
+        <div class="proof-logo">IBM</div>
+        <div class="proof-logo">Lloyds Bank</div>
+        <div class="proof-logo">NHS</div>
+        <div class="proof-logo">Radisson</div>
+        <div class="proof-logo">Santander</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHALLENGES -->
+  <div class="section challenge-strip">
+    <div class="container">
+      <div style="text-align:center; margin-bottom:48px;">
+        <div class="tag">The Challenge</div>
+        <h2>When Network Complexity Outpaces Insight</h2>
+        <p class="lead" style="margin: 12px auto 0;">Modern enterprise networks are distributed and fragile. Without full-stack visibility, IT teams spend more time reacting to outages than preventing them.</p>
+      </div>
+      <div class="challenge-grid">
+        <div class="challenge-item">
+          <div class="challenge-icon">🌩</div>
+          <h4>Cloud Blind Spots</h4>
+          <p>No consistent visibility across AWS, Azure, GCP, and private cloud workloads — leaving east-west traffic completely dark.</p>
+        </div>
+        <div class="challenge-item">
+          <div class="challenge-icon">🔧</div>
+          <h4>Slow Mean Time to Repair</h4>
+          <p>Without packet-level telemetry, correlating symptoms to root cause takes hours — while users and business are impacted.</p>
+        </div>
+        <div class="challenge-item">
+          <div class="challenge-icon">🧩</div>
+          <h4>Tool Sprawl</h4>
+          <p>Fragmented monitoring tools create siloed data, alert fatigue, and gaps in coverage across WAN, campus, and cloud.</p>
+        </div>
+        <div class="challenge-item">
+          <div class="challenge-icon">📉</div>
+          <h4>Reactive Operations</h4>
+          <p>Without predictive analytics and intelligent baselines, teams only know something is wrong when the help desk calls.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OUTCOMES -->
+  <div class="section" style="background: var(--gray-50);">
+    <div class="container">
+      <div style="text-align:center; margin-bottom:48px;">
+        <div class="tag">Strategic Outcomes</div>
+        <h2>Unlock the Strategic Value of Observability</h2>
+        <p class="lead" style="margin:12px auto 0;">Four outcomes that move network operations from reactive firefighting to business-aligned performance management.</p>
+      </div>
+      <div class="grid-4">
+        <div class="outcome-card" onclick="track('Visit Solution Page', {section:'outcome', outcome:'MTTR'})">
+          <div class="outcome-num">70%</div>
+          <h3>Faster Problem Resolution</h3>
+          <p>Reduce MTTR with packet-level root cause correlation and sub-second alerting before users are impacted.</p>
+        </div>
+        <div class="outcome-card" onclick="track('Visit Solution Page', {section:'outcome', outcome:'Coverage'})">
+          <div class="outcome-num">100%</div>
+          <h3>End-to-End Visibility</h3>
+          <p>Eliminate coverage gaps from edge to core — campus, WAN, SD-WAN, multi-cloud, and UCaaS all in one pane.</p>
+        </div>
+        <div class="outcome-card" onclick="track('Visit Solution Page', {section:'outcome', outcome:'Consolidation'})">
+          <div class="outcome-num">40%</div>
+          <h3>Reduced Tool Sprawl</h3>
+          <p>Consolidate fragmented network and APM tools into a single observability platform, cutting cost and complexity.</p>
+        </div>
+        <div class="outcome-card" onclick="track('Visit Solution Page', {section:'outcome', outcome:'Performance'})">
+          <div class="outcome-num">4.8×</div>
+          <h3>Digital Performance ROI</h3>
+          <p>Align application performance to business outcomes with actionable KPIs your CIO and CFO can act on.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SOLUTION DETAIL (split layout) -->
+  <div class="section">
+    <div class="container">
+      <div class="grid-2" style="gap: 64px; align-items: center;">
+        <div>
+          <div class="tag">How It Works</div>
+          <h2>Comprehensive Observability Built for Modern Enterprise Scale</h2>
+          <p style="margin: 16px 0 24px;">NETSCOUT's nGenius solutions deliver Visibility Without Borders — a single architecture that scales from 1Gbps remote offices to 100Gbps data centers without sampling, gaps, or guesswork.</p>
+          <ul class="spec-list" style="margin-bottom:32px;">
+            <li>Wire-speed packet capture at up to 100Gbps — no sampling, ever</li>
+            <li>Consistent metrics across public cloud, private cloud, SDN, and MPLS</li>
+            <li>DPI-based classification of 3,000+ applications in real time</li>
+            <li>AI-powered anomaly detection and adaptive baseline thresholds</li>
+            <li>Unified dashboard: network, application, and service health in one view</li>
+            <li>Seamless integration with ServiceNow, Splunk, Cisco, Juniper, and 40+ tools</li>
+          </ul>
+          <div style="display:flex; gap:14px; flex-wrap:wrap;">
+            <button class="btn-primary" onclick="showPage('ngenius'); track('Visit Solution Page', {cta_name:'Obs Explore nGenius', location:'obs_solution_detail'})">
+              Explore the nGenius Platform →
+            </button>
+            <button class="btn-secondary" onclick="showPage('video'); track('Watch Product Video', {cta_name:'Obs Watch Demo', location:'obs_solution_detail'})">
+              Watch 10-min Demo
+            </button>
+          </div>
+        </div>
+        <div style="background: linear-gradient(135deg, #0A0F1A 0%, #0D1A2A 100%); border-radius: 16px; padding: 32px;">
+          <p style="color:rgba(255,255,255,.4); font-size:11px; text-transform:uppercase; letter-spacing:1px; margin-bottom:20px;">Visibility Without Borders — Coverage Map</p>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div style="background:rgba(0,163,173,.12); border:1px solid rgba(0,163,173,.25); border-radius:10px; padding:16px;">
+              <div style="font-size:22px; margin-bottom:8px;">🏢</div>
+              <div style="color:white; font-size:13px; font-weight:700; margin-bottom:4px;">Campus &amp; Branch</div>
+              <div style="color:#5FD8DF; font-size:11px;">1G–10G · Full visibility</div>
+            </div>
+            <div style="background:rgba(0,163,173,.12); border:1px solid rgba(0,163,173,.25); border-radius:10px; padding:16px;">
+              <div style="font-size:22px; margin-bottom:8px;">🖥</div>
+              <div style="color:white; font-size:13px; font-weight:700; margin-bottom:4px;">Data Center</div>
+              <div style="color:#5FD8DF; font-size:11px;">Up to 100G · No sampling</div>
+            </div>
+            <div style="background:rgba(62,186,143,.10); border:1px solid rgba(62,186,143,.25); border-radius:10px; padding:16px;">
+              <div style="font-size:22px; margin-bottom:8px;">☁</div>
+              <div style="color:white; font-size:13px; font-weight:700; margin-bottom:4px;">Multi-Cloud</div>
+              <div style="color:#3EBA8F; font-size:11px;">AWS · Azure · GCP</div>
+            </div>
+            <div style="background:rgba(62,186,143,.10); border:1px solid rgba(62,186,143,.25); border-radius:10px; padding:16px;">
+              <div style="font-size:22px; margin-bottom:8px;">🔗</div>
+              <div style="color:white; font-size:13px; font-weight:700; margin-bottom:4px;">SD-WAN &amp; WAN</div>
+              <div style="color:#3EBA8F; font-size:11px;">MPLS · SD-WAN · SASE</div>
+            </div>
+          </div>
+          <div style="margin-top:12px; background:rgba(255,255,255,.06); border-radius:10px; padding:16px; display:flex; gap:12px; align-items:center;">
+            <div style="font-size:24px;">🤖</div>
+            <div>
+              <div style="color:white; font-size:13px; font-weight:700;">nGenius Copilot AI</div>
+              <div style="color:rgba(255,255,255,.55); font-size:12px; margin-top:2px;">Conversational intelligence across all data sources</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRODUCTS ROW -->
+  <div class="section" style="background: var(--gray-50);">
+    <div class="container">
+      <div style="text-align:center; margin-bottom:40px;">
+        <div class="tag">Products</div>
+        <h2>The nGenius Observability Portfolio</h2>
+        <p class="lead" style="margin:12px auto 0;">Purpose-built appliances, sensors, and software to instrument every layer of your network.</p>
+      </div>
+      <div class="product-row">
+        <div class="prod-chip" onclick="showPage('ngenius'); track('Visit Solution Page', {product:'nGeniusONE', location:'obs_product_row'})">
+          <div class="prod-icon">🎛</div>
+          <h4>nGeniusONE</h4>
+          <p>Central analytics and management platform for all observability data</p>
+        </div>
+        <div class="prod-chip" onclick="showPage('ngenius'); track('Visit Solution Page', {product:'nGenius Copilot', location:'obs_product_row'})">
+          <div class="prod-icon">🤖</div>
+          <h4>nGenius Copilot</h4>
+          <p>AI-powered conversational interface for instant network insight</p>
+        </div>
+        <div class="prod-chip" onclick="showPage('ngenius'); track('Visit Solution Page', {product:'InfiniStreamNG', location:'obs_product_row'})">
+          <div class="prod-icon">⚡</div>
+          <h4>InfiniStreamNG</h4>
+          <p>High-performance hardware probes for data center packet capture</p>
+        </div>
+        <div class="prod-chip" onclick="showPage('ngenius'); track('Visit Solution Page', {product:'nGenius Edge Sensor', location:'obs_product_row'})">
+          <div class="prod-icon">📡</div>
+          <h4>Edge Sensor</h4>
+          <p>Lightweight sensors for branch and remote site coverage</p>
+        </div>
+        <div class="prod-chip" onclick="showPage('ngenius'); track('Visit Solution Page', {product:'vSTREAM', location:'obs_product_row'})">
+          <div class="prod-icon">☁</div>
+          <h4>vSTREAM</h4>
+          <p>Virtual appliances for cloud and SDN environment instrumentation</p>
+        </div>
+      </div>
+      <div style="text-align:center; margin-top:32px;">
+        <button class="btn-secondary" onclick="showPage('ngenius'); track('Visit Solution Page', {cta_name:'Obs View All Products', location:'obs_product_row'})">
+          View Full Product Details →
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- INLINE CTA BAND -->
+  <div class="section">
+    <div class="container">
+      <div class="inline-cta">
+        <div>
+          <h2>See Unmatched Visibility in Your Own Environment</h2>
+          <p>Join a live 30-minute session with a NETSCOUT Solutions Engineer — tailored to your infrastructure, your gaps, your questions.</p>
+        </div>
+        <div class="inline-cta-btns">
+          <button class="btn-solid-white" onclick="showPage('demo'); track('CTA Click', {cta_name:'Obs Inline CTA Request Demo', location:'obs_inline_cta'})">
+            Request a Live Demo
+          </button>
+          <button class="btn-ghost-white" onclick="showPage('brief'); track('Download Product Brief', {cta_name:'Obs Inline CTA Download Brief', location:'obs_inline_cta'})">
+            Download Solution Brief
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TESTIMONIALS -->
+  <div class="testimonial-section">
+    <div class="container">
+      <h2>What Our Customers Are Saying</h2>
+      <p class="sub">From global banks to healthcare systems — NETSCOUT is the observability platform they trust.</p>
+      <div class="grid-3">
+        <div class="testimonial-card">
+          <blockquote>Before NETSCOUT, we were always chasing outages. Now we catch degradation in the WAN before a single user calls the help desk. Our MTTR dropped by over 60% in the first quarter.</blockquote>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">RK</div>
+            <div>
+              <div class="testimonial-name">Ravi Kumar</div>
+              <div class="testimonial-role">VP Network Engineering · Global Financial Services</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <blockquote>The unified view across our multi-cloud and on-prem estate was something we couldn't get anywhere else. nGenius is the only tool that gives us true east-west visibility inside AWS.</blockquote>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">SL</div>
+            <div>
+              <div class="testimonial-name">Sarah Lennox</div>
+              <div class="testimonial-role">Director of IT Infrastructure · NHS Trust</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <blockquote>We consolidated four monitoring tools into nGeniusONE. The team got their time back and we finally have one source of truth for network and application performance across 40 countries.</blockquote>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">MF</div>
+            <div>
+              <div class="testimonial-name">Marc Fournier</div>
+              <div class="testimonial-role">CTO · Global Hospitality Group</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="customer-logos">
+        <div class="cust-logo">DuPont</div>
+        <div class="cust-logo">HSBC</div>
+        <div class="cust-logo">IBM</div>
+        <div class="cust-logo">Lloyds Bank</div>
+        <div class="cust-logo">NHS</div>
+        <div class="cust-logo">Santander</div>
+        <div class="cust-logo">Radisson</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="section">
+    <div class="container">
+      <div class="grid-2" style="gap: 80px; align-items: start;">
+        <div>
+          <div class="tag">FAQ</div>
+          <h2>Common Questions</h2>
+          <p class="lead" style="margin-top: 12px;">Everything you need to know about deploying network observability at enterprise scale.</p>
+          <div style="margin-top: 32px;">
+            <button class="btn-primary" onclick="showPage('demo'); track('CTA Click', {cta_name:'Obs FAQ Talk to Expert', location:'obs_faq'})">
+              Talk to an Expert →
+            </button>
+          </div>
+        </div>
+        <div id="obs-faq">
+          <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-q">How much can NETSCOUT improve my MTTR? <span class="chevron">›</span></div>
+            <div class="faq-a">Customers typically see a 50–70% reduction in Mean Time to Repair. By providing packet-level root cause analysis correlated with application and infrastructure context, teams eliminate the manual triage that consumes most incident response time.</div>
+          </div>
+          <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-q">How does NETSCOUT deliver end-to-end visibility? <span class="chevron">›</span></div>
+            <div class="faq-a">We deploy purpose-built probes (InfiniStreamNG, Edge Sensor) and virtual appliances (vSTREAM) across every network tier. These feed wire-speed telemetry into nGeniusONE, giving a unified view from edge to core without sampling.</div>
+          </div>
+          <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-q">What makes NETSCOUT different from other observability tools? <span class="chevron">›</span></div>
+            <div class="faq-a">NETSCOUT is the only vendor that captures full-packet data at 100Gbps without sampling. Competitors rely on flow-based data or agent instrumentation, which misses the precise packet-level context needed for root cause analysis.</div>
+          </div>
+          <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-q">Can NETSCOUT support proactive performance management? <span class="chevron">›</span></div>
+            <div class="faq-a">Yes. nGenius Copilot uses AI-driven baselines to detect anomalies and predict degradation before users are impacted. You can set adaptive thresholds per service, site, or time-of-day to proactively alert and route tickets.</div>
+          </div>
+          <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-q">Which industries does NETSCOUT serve? <span class="chevron">›</span></div>
+            <div class="faq-a">Financial services, healthcare, insurance, government, manufacturing, retail, telecom, transportation, and utilities. We serve 90% of Fortune 100 companies and the world's largest service providers.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM CTA -->
+  <div class="cta-section">
+    <div class="container">
+      <div style="max-width:600px; margin:0 auto;">
+        <div class="tag" style="margin-bottom:20px;">Get Started</div>
+        <h2>Unlock End-to-End Visibility with NETSCOUT</h2>
+        <p>Contact us to learn how nGenius solutions can give your team the observability they need to keep your network running at its best.</p>
+        <div class="cta-group" style="margin-top:32px;">
+          <button class="btn-white" onclick="showPage('demo'); track('CTA Click', {cta_name:'Obs Bottom CTA Request Demo', location:'obs_bottom_cta'})">
+            ▶ Request a Demo
+          </button>
+          <button class="btn-white" onclick="showPage('call'); track('Schedule Discovery Call', {cta_name:'Obs Bottom CTA Book Call', location:'obs_bottom_cta'})">
+            📅 Book a Discovery Call
+          </button>
+          <button class="btn-white" onclick="showPage('brief'); track('Download Product Brief', {cta_name:'Obs Bottom CTA Download Brief', location:'obs_bottom_cta'})">
+            Download Brief
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER (re-used) -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="nav-logo" style="margin-bottom:12px; color:white;">NET<span style="color:var(--teal)">SCOUT</span></div>
+          <p style="font-size:13px; max-width:260px; margin-bottom:16px;">Guardians of the Connected World® — Network Observability that keeps your business running.</p>
+          <p style="font-size:12px; color:rgba(255,255,255,.35);">© 2026 NETSCOUT Systems, Inc. · NASDAQ: NTCT</p>
+        </div>
+        <div class="footer-col">
+          <h4>Solutions</h4>
+          <ul>
+            <li onclick="showPage('observability'); track('Visit Solution Page',{link:'Network Observability'})">Network Observability</li>
+            <li onclick="showPage('ngenius'); track('Visit Solution Page',{link:'nGenius Platform'})">nGenius Platform</li>
+            <li onclick="track('Visit Solution Page',{link:'DDoS Protection'})">DDoS Protection</li>
+            <li onclick="track('Visit Solution Page',{link:'Network Security'})">Network Security</li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Resources</h4>
+          <ul>
+            <li onclick="showPage('brief'); track('Download Product Brief',{link:'Solution Brief'})">Solution Brief</li>
+            <li onclick="showPage('video'); track('Watch Product Video',{link:'Product Video'})">Product Video</li>
+            <li onclick="showPage('webinar'); track('View Resource Library',{link:'Webinars'})">Webinars</li>
+            <li onclick="showPage('resources'); track('Download Arbor DDoS Report',{link:'DDoS Report'})">DDoS Threat Report</li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Connect</h4>
+          <ul>
+            <li onclick="showPage('demo'); track('CTA Click',{link:'Request Demo'})">Request a Demo</li>
+            <li onclick="showPage('call'); track('Schedule Discovery Call',{link:'Book Call'})">Book a Call</li>
+            <li onclick="track('CTA Click',{link:'Contact'})">Contact Sales</li>
+            <li onclick="showPage('home'); track('CTA Click',{link:'Home'})">Back to Home</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>Privacy Policy · Terms of Use · Cookie Settings</span>
+        <a href="https://my.netscout.com" target="_blank" style="color:rgba(255,255,255,.5);">myNETSCOUT Login</a>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- ============================================================
+     JAVASCRIPT
+============================================================ -->
+<script>
+  // ============================================================
+  // AMPLITUDE INIT
+  // ============================================================
+  const sessionReplayTracking = window.sessionReplay.plugin({ sampleRate: 1 });
+  window.amplitude.add(sessionReplayTracking);
+
+  window.amplitude.init('f8d8134cac334a8a590fcc001171dc79', {
+    autocapture: {
+      sessions: true,
+      pageViews: false,
+      formInteractions: false,
+      fileDownloads: false,
+      elementInteractions: false,
+    },
+  });
+
+  function track(event, props = {}) {
+    window.amplitude.track(event, props);
+  }
+
+  // ============================================================
+  // ROUTER
+  // ============================================================
+  const pages = ['home', 'observability', 'ngenius', 'solutions', 'resources', 'brief', 'video', 'webinar', 'demo', 'call'];
+
+  function showPage(id) {
+    pages.forEach(p => {
+      const el = document.getElementById('page-' + p);
+      if (el) el.classList.toggle('active', p === id);
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // Track page view
+    const pageNames = {
+      home: 'Home',
+      observability: 'Network Observability Landing Page',
+      ngenius: 'nGenius Solution Page',
+      brief: 'Product Brief Download',
+      video: 'Product Video',
+      webinar: 'Webinar Registration',
+      demo: 'Request Demo',
+      call: 'Book Discovery Call'
+    };
+    track('Page View', {
+      page_name: pageNames[id] || id,
+      page_path: '/' + (id === 'home' ? '' : id)
+    });
+  }
+
+  // ============================================================
+  // FEATURE TABS (nGenius page)
+  // ============================================================
+  function switchTab(tabId) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    event.target.classList.add('active');
+    track('Visit Solution Page', { tab: tabId });
+  }
+
+  function toggleFaq(item) {
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('#obs-faq .faq-item').forEach(f => f.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  }
+
+  // ============================================================
+  // VIDEO PLAYER
+  // ============================================================
+  let videoTimer = null;
+  let elapsed = 0;
+
+  function playVideo() {
+    const overlay = document.getElementById('video-overlay');
+    const playing = document.getElementById('video-playing');
+    overlay.style.display = 'none';
+    playing.style.display = 'flex';
+    track('Watch Product Video', { video: 'nGenius Platform Overview', action: 'play' });
+
+    if (videoTimer) clearInterval(videoTimer);
+    videoTimer = setInterval(() => {
+      elapsed += 5;
+      const pct = Math.min((elapsed / 623) * 100, 100);
+      document.getElementById('progress-bar').style.width = pct + '%';
+      const m = Math.floor(elapsed / 60), s = elapsed % 60;
+      document.getElementById('time-elapsed').textContent = m + ':' + String(s).padStart(2, '0');
+      document.getElementById('video-time').textContent = m + ':' + String(s).padStart(2, '0') + ' / 10:23';
+      if (elapsed >= 623) {
+        clearInterval(videoTimer);
+        track('Watch Product Video', { video: 'nGenius Platform Overview', action: 'complete' });
+      }
+    }, 500);
+  }
+
+  function selectChapter(el, time, title) {
+    document.querySelectorAll('.chapter-item').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    track('Watch Product Video', { chapter_title: title, timestamp: time, action: 'chapter_select' });
+  }
+
+  // ============================================================
+  // FORMS
+  // ============================================================
+  function submitBriefForm(e) {
+    e.preventDefault();
+    track('Download Product Brief', { content_type: 'product_brief', content_name: 'nGenius Platform Data Sheet' });
+    document.getElementById('brief-form-card').style.display = 'none';
+    const s = document.getElementById('brief-success');
+    s.style.display = 'block';
+  }
+
+  function submitWebinarForm(e) {
+    e.preventDefault();
+    track('Register for Webinar', { webinar: 'DDoS Threat Landscape 2025', event_date: '2025-05-20' });
+    document.getElementById('webinar-form-card').style.display = 'none';
+    document.getElementById('webinar-success').style.display = 'block';
+    document.getElementById('join-section').style.display = 'block';
+  }
+
+  function submitDemoForm(e) {
+    e.preventDefault();
+    const interests = [...document.querySelectorAll('.interest-btn.selected')].map(b => b.textContent.trim());
+    track('Submit Demo Request', { interests, source_page: 'request_demo' });
+    document.getElementById('demo-form-card').style.display = 'none';
+    document.getElementById('demo-success').style.display = 'block';
+  }
+
+  function toggleInterest(btn) {
+    btn.classList.toggle('selected');
+  }
+
+  // ============================================================
+  // CALENDAR WIDGET
+  // ============================================================
+  function buildCalendar() {
+    const available = [6, 7, 8, 12, 13, 14, 15, 19, 20, 21, 22, 27, 28, 29];
+    const grid = document.getElementById('cal-dates');
+    const today = 4;
+    let html = '';
+    for (let i = 0; i < 3; i++) html += `<div class="cal-date empty"></div>`;
+    for (let d = 1; d <= 31; d++) {
+      if (d === today) html += `<div class="cal-date today available" onclick="selectDate(this, ${d})">${d}</div>`;
+      else if (available.includes(d)) html += `<div class="cal-date available" onclick="selectDate(this, ${d})">${d}</div>`;
+      else html += `<div class="cal-date past">${d}</div>`;
+    }
+    grid.innerHTML = html;
+  }
+
+  function selectDate(el, day) {
+    document.querySelectorAll('.cal-date').forEach(d => d.classList.remove('selected'));
+    el.classList.add('selected');
+    document.getElementById('time-slots').style.display = 'grid';
+    document.querySelectorAll('.time-slot').forEach(t => t.classList.remove('selected'));
+    track('Schedule Discovery Call', { selected_date: '2025-05-' + day, action: 'date_select' });
+  }
+
+  function selectTime(btn, time) {
+    document.querySelectorAll('.time-slot').forEach(t => t.classList.remove('selected'));
+    btn.classList.add('selected');
+    const selectedDate = document.querySelector('.cal-date.selected');
+    const date = selectedDate ? selectedDate.textContent : '?';
+    track('Schedule Discovery Call', {
+      selected_date: 'May ' + date + ', 2025',
+      selected_time: time,
+      calendar_event: 'NETSCOUT Discovery Call – Eddie Chiang'
+    });
+    setTimeout(() => {
+      document.getElementById('calendar-widget').style.display = 'none';
+      const card = document.getElementById('confirmation-card');
+      card.style.display = 'block';
+      document.getElementById('confirm-text').textContent =
+        `Your call is confirmed for May ${date} at ${time} ET with Eddie Chiang, Solutions Engineer.`;
+    }, 400);
+  }
+
+  // ============================================================
+  // INIT
+  // ============================================================
+  buildCalendar();
+  // Fire initial page view
+  track('Page View', { page_name: 'Home', page_path: '/' });
+</script>
+</body>
+</html>
